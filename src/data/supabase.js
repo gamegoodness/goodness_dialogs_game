@@ -14,5 +14,5 @@
  * anything anywhere.
  */
 
-export const SUPABASE_URL = 'oecmshoarmcucdtuxyxw';
+export const SUPABASE_URL = 'https://oecmshoarmcucdtuxyxw.supabase.co';
 export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lY21zaG9hcm1jdWNkdHV4eXh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzcyODEsImV4cCI6MjA5ODc1MzI4MX0.J2tHrETm0Pb64kSyThWudkbjij8ruEl35s5C1rqhUxc';

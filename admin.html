@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Admin · Milo &amp; the Good Angel</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #1A2E26, #0d1a14) fixed;
+      color: #eef5f1; min-height: 100vh; padding: 24px 16px 64px;
+    }
+    a { color: #7CE0BC; }
+    .wrap { max-width: 1000px; margin: 0 auto; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .08em;
+         color: #7CE0BC; margin: 34px 0 12px; }
+    .sub { color: rgba(255,255,255,.55); font-size: 14px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between;
+              gap: 12px; flex-wrap: wrap; }
+    .panel {
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+      border-radius: 12px; padding: 20px;
+    }
+    /* login */
+    #login { max-width: 380px; margin: 10vh auto 0; }
+    #login h1 { margin-bottom: 14px; }
+    .fld { display: block; margin-bottom: 12px; font-size: 13px; color: rgba(255,255,255,.7); }
+    .fld input {
+      width: 100%; margin-top: 5px; padding: 11px 12px; font-size: 15px;
+      background: rgba(255,255,255,.08); color: #fff;
+      border: 1px solid rgba(255,255,255,.2); border-radius: 8px;
+    }
+    .fld input:focus { outline: none; border-color: #7CE0BC; }
+    button {
+      background: #7CE0BC; color: #08110d; font-weight: 700; font-size: 15px;
+      border: none; border-radius: 8px; padding: 11px 20px; cursor: pointer;
+    }
+    button:hover { filter: brightness(1.08); }
+    button.ghost { background: transparent; color: #eef5f1;
+                   border: 1px solid rgba(255,255,255,.3); font-weight: 600; }
+    .err { color: #ffb4a2; font-size: 14px; min-height: 20px; margin: 8px 0; }
+    /* stat cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+             gap: 12px; }
+    .card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+            border-radius: 12px; padding: 16px; }
+    .card .num { font-size: 28px; font-weight: 800; }
+    .card .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .07em;
+                 color: rgba(255,255,255,.55); margin-top: 4px; }
+    /* tables */
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: .07em;
+         color: rgba(255,255,255,.5); }
+    tr.click { cursor: pointer; }
+    tr.click:hover { background: rgba(124,224,188,.08); }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 99px;
+            font-size: 12px; font-weight: 700; background: rgba(124,224,188,.15); color: #7CE0BC; }
+    .pill.neg { background: rgba(255,120,90,.15); color: #ffb4a2; }
+    /* timeline */
+    .session { margin-bottom: 18px; }
+    .session-h { font-size: 12px; text-transform: uppercase; letter-spacing: .07em;
+                 color: rgba(255,255,255,.45); margin-bottom: 6px; }
+    .ev { display: flex; gap: 10px; padding: 6px 0; font-size: 14px;
+          border-bottom: 1px dashed rgba(255,255,255,.08); }
+    .ev time { flex: 0 0 62px; color: rgba(255,255,255,.45); font-size: 12px; padding-top: 2px; }
+    .quiet { color: rgba(255,255,255,.5); font-size: 14px; padding: 12px 0; }
+    .muted { color: rgba(255,255,255,.45); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div id="login" class="panel">
+      <h1>🕊️ Admin panel</h1>
+      <div class="sub" style="margin-bottom:16px">Milo &amp; the Good Angel — student data</div>
+      <label class="fld">Email
+        <input id="email" type="email" autocomplete="username" value="gamegoodnessinc@gmail.com" />
+      </label>
+      <label class="fld">Password
+        <input id="password" type="password" autocomplete="current-password" />
+      </label>
+      <div id="login-err" class="err"></div>
+      <button id="login-btn">Sign in</button>
+    </div>
+
+    <div id="dash" hidden>
+      <div class="topbar">
+        <div>
+          <h1>🕊️ Student analytics</h1>
+          <div class="sub" id="loaded-at"></div>
+        </div>
+        <div style="display:flex; gap:8px">
+          <button class="ghost" id="refresh-btn">↻ Refresh</button>
+          <button class="ghost" id="logout-btn">Log out</button>
+        </div>
+      </div>
+
+      <h2>Overview</h2>
+      <div class="cards" id="stats"></div>
+
+      <h2>Students</h2>
+      <div class="sub" style="margin-bottom:8px">Click a student to see their full playthrough.</div>
+      <div class="panel tbl-wrap" id="students"></div>
+
+      <div id="detail" hidden>
+        <h2 id="detail-title"></h2>
+        <div class="panel" id="timeline"></div>
+      </div>
+
+      <h2>Choices by moment</h2>
+      <div class="panel tbl-wrap" id="choices"></div>
+
+      <h2>Reflections</h2>
+      <div class="panel tbl-wrap" id="reflections"></div>
+    </div>
+
+  </div>
+  <script type="module" src="./src/admin/admin.js"></script>
+</body>
+</html>

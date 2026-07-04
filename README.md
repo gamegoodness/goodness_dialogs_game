@@ -44,10 +44,18 @@ That's it. The anon key is safe in the browser: the SQL sets row-level-security
 policies so the game can only *insert* rows, never read or change them. If the
 keys are left empty the game plays normally and simply logs nothing.
 
-**Analyzing the data:** open **Table Editor** (`students`, `game_events`) to
-browse, or use the ready-made admin queries at the bottom of
-`supabase/schema.sql` (per-moment choice breakdowns, final scores, reflections,
-one child's full playthrough, averages by country).
+**Analyzing the data — admin panel:** open **`/admin.html`** (e.g.
+`http://localhost:5173/admin.html`) and sign in with the admin email +
+password (a Supabase Auth user; only that account's email is allowed to read
+data by the RLS policies). The panel shows overview stats, every student with
+their full playthrough timeline, per-moment choice breakdowns, and all written
+reflections. Alternatively use **Table Editor** in the Supabase dashboard, or
+the ready-made SQL queries at the bottom of `supabase/schema.sql`.
+
+**Spam protection:** inserts are validated in the database (length limits,
+allowed event types, payload size) and rate-limited by triggers — max 500
+events per playthrough, 20k events and 1000 new students per hour. See the
+"Anti-spam" section of `supabase/schema.sql`.
 
 ---
 

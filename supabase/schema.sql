@@ -2,7 +2,7 @@
 -- Goodness Dialogs Game — Supabase setup
 --
 -- HOW TO RUN: Supabase dashboard → your project → SQL Editor → New query →
--- paste this whole file → Run. That's it, run it once.
+-- paste this whole file → Run. Safe to re-run any time (it upgrades in place).
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- One row per child who fills the "about you" form.
@@ -37,18 +37,98 @@ create table if not exists public.game_events (
 create index if not exists game_events_student_idx on public.game_events (student_id);
 create index if not exists game_events_session_idx on public.game_events (session_id);
 create index if not exists game_events_type_idx    on public.game_events (event_type);
+create index if not exists game_events_created_idx on public.game_events (created_at);
+create index if not exists students_created_idx    on public.students (created_at);
 
 -- ── Security: the browser (anon key) can only INSERT, never read/edit ─────
 alter table public.students    enable row level security;
 alter table public.game_events enable row level security;
 
+-- Inserts must look like real form answers (length/range limits keep out
+-- garbage and megabyte-sized payloads).
 drop policy if exists "game can insert students" on public.students;
 create policy "game can insert students"
-  on public.students for insert to anon with check (true);
+  on public.students for insert to anon
+  with check (
+    char_length(name) between 1 and 60
+    and (age is null or age between 3 and 99)
+    and (city is null or char_length(city) <= 60)
+    and (country is null or char_length(country) <= 60)
+  );
 
+-- Events must use a known event type and stay small.
 drop policy if exists "game can insert events" on public.game_events;
 create policy "game can insert events"
-  on public.game_events for insert to anon with check (true);
+  on public.game_events for insert to anon
+  with check (
+    event_type in (
+      'game_start', 'choice_1', 'choice_2', 'story_skipped',
+      'try_differently', 'reflection', 'reflection_skipped',
+      'episode_complete'
+    )
+    and pg_column_size(data) <= 4096
+  );
+
+-- ── Anti-spam rate limits (enforced in the database, can't be bypassed) ───
+-- A real playthrough writes ~50 events, so these caps never touch students
+-- but stop anyone trying to flood the tables with the public key.
+
+create or replace function public.students_guard()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  -- At most 1000 new students per hour across the whole game.
+  if (select count(*) from public.students
+       where created_at > now() - interval '1 hour') >= 1000 then
+    raise exception 'rate limit: too many new students right now';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists students_guard_trg on public.students;
+create trigger students_guard_trg
+  before insert on public.students
+  for each row execute function public.students_guard();
+
+create or replace function public.game_events_guard()
+returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  -- One playthrough (session) can never write more than 500 events...
+  if (select count(*) from public.game_events
+       where session_id = new.session_id) >= 500 then
+    raise exception 'rate limit: session event cap reached';
+  end if;
+  -- ...and the whole game tops out at 20k events/hour (≈400 playthroughs).
+  if (select count(*) from public.game_events
+       where created_at > now() - interval '1 hour') >= 20000 then
+    raise exception 'rate limit: too many events right now';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists game_events_guard_trg on public.game_events;
+create trigger game_events_guard_trg
+  before insert on public.game_events
+  for each row execute function public.game_events_guard();
+
+-- ── Admin access: ONLY the admin account may read the data ────────────────
+-- Used by admin.html (the admin panel). Pinned to the admin email so that
+-- no other signed-in account can ever read student data.
+
+drop policy if exists "admin can read students" on public.students;
+create policy "admin can read students"
+  on public.students for select to authenticated
+  using ((auth.jwt() ->> 'email') = 'gamegoodnessinc@gmail.com');
+
+drop policy if exists "admin can read events" on public.game_events;
+create policy "admin can read events"
+  on public.game_events for select to authenticated
+  using ((auth.jwt() ->> 'email') = 'gamegoodnessinc@gmail.com');
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
