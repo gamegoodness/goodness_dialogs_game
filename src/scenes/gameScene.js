@@ -59,14 +59,42 @@ export function createGameScene(app) {
     ]),
   ]);
 
+<<<<<<< Updated upstream
   // ── Stage (characters) ───────────────────────────────────────────────────
+=======
+  // ── Stage: angel, focus dim layer, character portrait, speech bubble ─────
+  // DOM order matters: the dim layer paints ABOVE the angel (and blurs the
+  // whole backdrop behind it) but BELOW the portrait and the speech bubble, so
+  // when a character talks, everything blurs and darkens except the talker and
+  // the words coming out of them.
+>>>>>>> Stashed changes
   const angel = createAngel(G.am, G.al);
   const portrait = createPortrait(moment().char);
+<<<<<<< Updated upstream
   const stage = el('div.stage', {}, [angel.el, portrait.el]);
+=======
+>>>>>>> Stashed changes
 
-  // ── Dialog box ───────────────────────────────────────────────────────────
+  // The speech bubble: character lines type HERE, next to the talker, with a
+  // tail pointing at them — not in the narrator box at the bottom.
+  const speechName = el('div.speech-name');
+  const speechText = el('div.speech-text');
+  const speech = el('div.speech', {}, [speechName, speechText]);
+
+  const skipBtn = el('button.skip-btn', { type: 'button' }, ['Skip story ▸▸']);
+  const stage = el('div.stage', {}, [angel.el, focusDim, portrait.el, speech, skipBtn]);
+
+  // ── Dialog box (narrator + choices) ──────────────────────────────────────
   const nameplate = el('div.nameplate');
   const contentArea = el('div.content-area');
+<<<<<<< Updated upstream
+=======
+  // The OK button MOVES between containers: it sits inside the speech bubble
+  // while a character talks, and inside the dialog box during narration.
+  const okBtn = el('button.ok-btn', { type: 'button' }, [
+    'OK ', el('span.arr', {}, ['▸']),
+  ]);
+>>>>>>> Stashed changes
   const dialog = el('div.dialog', {}, [
     nameplate,
     el('div.dialog-inner', {}, [contentArea]),
@@ -91,6 +119,114 @@ export function createGameScene(app) {
     );
   }
 
+<<<<<<< Updated upstream
+=======
+  /** Focus mode on/off: who is talking right now (null = narrator).
+   * Character: dim + blur everything, pop the portrait, show the speech
+   * bubble by the character (the bottom dialog box recedes), OK in bubble.
+   * Narrator: bubble hides, dialog box returns, OK back in the dialog. */
+  function setFocus(who) {
+    if (who) {
+      layer.classList.add('focused', 'charline');
+      portrait.speak(who);
+      speechName.textContent = CHARACTER_NAMES[who] || who;
+      speech.classList.remove('speech-pop');
+      void speech.offsetWidth;
+      speech.classList.add('speech-pop');
+      speech.appendChild(okBtn);
+    } else {
+      layer.classList.remove('focused', 'charline');
+      setNameplate('📖', 'Story');
+      dialog.appendChild(okBtn);
+    }
+  }
+
+  // ── Story sequencer ──────────────────────────────────────────────────────
+  // Plays an array of beats into `body`, one at a time. Character beats type
+  // slowly in focus mode; the OK button advances between beats. Skip cancels
+  // the sequence and shows the one-line summary instead. Returns after the
+  // last beat (or after skip) — the caller then reveals the choices.
+
+  let activeRun = null;
+
+  function showOk() { okBtn.classList.add('show'); }
+  function hideOk() { okBtn.classList.remove('show'); }
+
+  skipBtn.addEventListener('click', () => { if (activeRun) activeRun.skip(); });
+
+  async function playStory({ beats, body, summary }) {
+    const run = { cancelled: false, tw: null, resolve: null, okH: null };
+    run.skip = () => {
+      run.cancelled = true;
+      if (run.tw) run.tw.cancel();
+      if (run.okH) okBtn.removeEventListener('click', run.okH);
+      if (run.resolve) run.resolve();
+    };
+    activeRun = run;
+    layer.classList.add('storying');
+
+    for (let i = 0; i < beats.length && !run.cancelled && alive; i++) {
+      const beat = beats[i];
+      setFocus(beat.who || null);
+      // Character lines type into THEIR speech bubble (slowly); narration
+      // types into the bottom dialog box.
+      const target = beat.who ? speechText : body;
+      await new Promise((res) => {
+        run.resolve = res;
+        run.tw = track(typewrite(target, beat.text, {
+          charMs: beat.who ? TIMING.dialogueCharMs : TIMING.typeCharMs,
+          onDone: res,
+        }));
+      });
+      if (run.cancelled || !alive) break;
+      // Wait for OK between beats (not after the last: choices take over).
+      if (i < beats.length - 1) {
+        await new Promise((res) => {
+          run.resolve = res;
+          run.okH = () => { sfx.advance(); res(); };
+          okBtn.addEventListener('click', run.okH, { once: true });
+          showOk();
+        });
+        hideOk();
+      }
+    }
+
+    hideOk();
+    layer.classList.remove('storying');
+    activeRun = null;
+    if (!alive) return;
+    setFocus(null);
+    if (run.cancelled) {
+      // Skipped: show the scene summary so the player still has the context.
+      typers.forEach((t) => t && t.cancel && t.cancel());
+      body.textContent = summary;
+    }
+  }
+
+  // ── Scenario title card ──────────────────────────────────────────────────
+  function showSceneCard() {
+    return new Promise((resolve) => {
+      const s = moment();
+      const card = el('div.scene-card', {}, [
+        el('div.sc-kicker', {}, [`Moment ${s.id} of ${total()}`]),
+        el('div.sc-title', {}, [s.title]),
+        el('div.sc-tag', { style: { background: s.tc } }, [s.tag]),
+        el('div.sc-hint', {}, ['Tap to begin']),
+      ]);
+      layer.appendChild(card);
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        card.classList.add('sc-out');
+        setTimeout(() => { card.remove(); resolve(); }, 380);
+      };
+      card.addEventListener('click', finish);
+      setTimeout(finish, TIMING.sceneCardMs);
+    });
+  }
+
+>>>>>>> Stashed changes
   // ── Phase content builders ───────────────────────────────────────────────
 
   function choicesRow(buttons) {

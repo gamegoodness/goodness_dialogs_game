@@ -21,18 +21,22 @@
   --paper: rgba(255, 255, 255, 0.96);
   --paper-soft: rgba(255, 255, 255, 0.72);
 
-  /* radii */
-  --r-sm: 7px;
-  --r-md: 11px;
-  --r-lg: 16px;
-  --r-xl: 22px;
-  --r-pill: 20px;
+  /* radii — sharp, game-UI edges */
+  --r-sm: 2px;
+  --r-md: 3px;
+  --r-lg: 4px;
+  --r-xl: 4px;
+  --r-pill: 3px;
 
-  /* shadow */
-  --shadow-1: 0 4px 12px rgba(0, 0, 0, 0.12);
-  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.2);
-  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.18);
-  --shadow-panel: 0 -8px 40px rgba(0, 0, 0, 0.45);
+  /* shadow — hard offset shadows for a chunky game-panel feel */
+  --shadow-1: 3px 3px 0 rgba(0, 0, 0, 0.35);
+  --shadow-2: 4px 4px 0 rgba(0, 0, 0, 0.4);
+  --shadow-card: 6px 6px 0 rgba(0, 0, 0, 0.3);
+  --shadow-panel: 8px 8px 0 rgba(0, 0, 0, 0.35);
+  --shadow-hard: 4px 4px 0 rgba(0, 0, 0, 0.45);
+
+  /* angular tab shape (nameplates, chips, tags) */
+  --clip-tab: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
 
   /* motion easing (durations come from JS via config.js) */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

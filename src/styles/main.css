@@ -68,26 +68,27 @@
 .hud-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .hud-panel {
   display: flex; align-items: center; gap: 10px;
-  background: var(--hud-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--r-pill);
+  background: rgba(8, 16, 13, 0.78);
+  border: 2px solid var(--panel-border);
+  border-radius: var(--r-sm);
   padding: 7px 14px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  box-shadow: var(--shadow-1);
 }
 .ep {
   font-size: 10.5px; font-weight: 700; letter-spacing: .09em;
   text-transform: uppercase; color: var(--paper-soft); white-space: nowrap;
 }
 .hud-chip {
-  font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-  color: #08110d; padding: 5px 11px; border-radius: var(--r-pill);
+  font-size: 10.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+  color: #08110d; padding: 6px 16px;
   background: var(--tc, var(--accent)); white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  clip-path: var(--clip-tab);
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.35));
 }
 .dots { display: flex; gap: 5px; }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.3); }
+.dot { width: 8px; height: 8px; border-radius: 0; background: rgba(255,255,255,.3); }
 .dot.on { background: #fff; }
 .dot.done { background: rgba(255,255,255,.75); }
 .pill {
@@ -107,11 +108,11 @@
 .angel {
   position: absolute; top: 6px; left: 18px; right: 18px;
   display: flex; align-items: center; gap: 12px;
-  background: var(--glass-bg); border: 1px solid var(--glass-border);
-  border-radius: var(--r-lg); padding: 10px 14px;
+  background: rgba(8, 16, 13, 0.55); border: 2px solid var(--glass-border);
+  border-radius: var(--r-sm); padding: 10px 14px;
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   max-width: 520px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-1);
 }
 .angel-avatar { position: relative; width: 46px; height: 46px; flex-shrink: 0; }
 .angel-img { width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
@@ -145,6 +146,67 @@
   .portrait { right: -2%; height: min(70%, 340px); opacity: .96; }
 }
 
+/* ── Speech bubble — character lines come FROM the character ───────────── */
+.speech {
+  position: absolute; z-index: 5;
+  left: 5%; right: 36%;
+  bottom: 20%;
+  max-width: 560px;
+  background: rgba(9, 17, 14, 0.96);
+  border: 2px solid var(--tc, var(--accent));
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-panel);
+  padding: 20px 18px 54px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity .35s ease, transform .35s var(--ease-out);
+}
+.vn.charline .speech { opacity: 1; pointer-events: auto; transform: none; }
+/* tail pointing right, at the character (border triangle + fill triangle) */
+.speech::before {
+  content: ""; position: absolute; right: -16px; bottom: 26px;
+  border-top: 13px solid transparent; border-bottom: 13px solid transparent;
+  border-left: 16px solid var(--tc, var(--accent));
+}
+.speech::after {
+  content: ""; position: absolute; right: -12px; bottom: 29px;
+  border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+  border-left: 13px solid rgba(9, 17, 14, 0.96);
+}
+.speech-name {
+  position: absolute; top: -15px; left: 12px;
+  background: var(--tc, var(--accent)); color: #08110d;
+  font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 6px 20px;
+  clip-path: var(--clip-tab);
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.4));
+}
+.speech-text {
+  font-size: 17px; color: #fff; line-height: 1.6; min-height: 1.6em;
+}
+.speech .ok-btn { position: absolute; right: 12px; bottom: 10px; }
+
+/* While a character talks, the narrator box recedes into the blur. */
+.dialog { transition: opacity .4s ease, transform .4s ease, filter .4s ease; }
+.vn.charline .dialog { opacity: .12; transform: translateY(10px); filter: blur(3px); pointer-events: none; }
+
+/* Mobile: the bubble sits ABOVE the character with a tail pointing down at
+   them (the portrait is small and centered-right on narrow screens). */
+@media (max-width: 620px) {
+  .speech { left: 12px; right: 16px; bottom: min(72%, 356px); padding: 16px 14px 50px; }
+  .speech-text { font-size: 15.5px; }
+  .speech::before {
+    right: 15%; bottom: -18px; border: none;
+    border-left: 13px solid transparent; border-right: 13px solid transparent;
+    border-top: 18px solid var(--tc, var(--accent));
+  }
+  .speech::after {
+    right: calc(15% + 3px); bottom: -13px; border: none;
+    border-left: 10px solid transparent; border-right: 10px solid transparent;
+    border-top: 14px solid rgba(9, 17, 14, 0.96);
+  }
+}
+
 /* On narrow screens the virtue tag chip is dropped so the goodness score
    always stays on screen; the tag still reads in the dialog + outcome. */
 @media (max-width: 600px) {
@@ -160,10 +222,10 @@
   margin: 0 14px max(14px, env(safe-area-inset-bottom));
   max-height: 70dvh;
   display: flex; flex-direction: column;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--r-xl);
-  box-shadow: var(--shadow-panel), inset 0 1px 0 var(--panel-glow);
+  background: rgba(10, 18, 15, 0.92);
+  border: 2px solid var(--panel-border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-panel);
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
 .dialog-inner {
@@ -172,15 +234,56 @@
   overflow-y: auto;
 }
 .nameplate {
-  position: absolute; top: -14px; left: 22px;
+  position: absolute; top: -15px; left: 18px;
   display: inline-flex; align-items: center; gap: 7px;
   background: var(--tc, var(--accent));
-  color: #08110d; font-weight: 800; font-size: 13px; letter-spacing: .02em;
-  padding: 6px 15px; border-radius: var(--r-pill);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  color: #08110d; font-weight: 800; font-size: 13px;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 6px 20px;
+  clip-path: var(--clip-tab);
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.4));
 }
 .nameplate .np-emoji { font-size: 14px; }
 
+<<<<<<< Updated upstream
+=======
+/* OK button — advances to the next dialog beat during the story. */
+.ok-btn {
+  position: absolute; right: 14px; bottom: 12px; z-index: 2;
+  display: none; align-items: center; gap: 7px;
+  background: var(--tc, var(--accent)); color: #08110d;
+  font-size: 13px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  padding: 9px 22px; border-radius: 0;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+  transition: transform .12s var(--ease-out), box-shadow .12s var(--ease-out);
+}
+.ok-btn.show { display: inline-flex; }
+.ok-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5); }
+.ok-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5); }
+
+/* Skip button — jumps past the story straight to the choices. Lives on the
+   stage (top-right), above the focus dim so it stays usable mid-story. */
+.skip-btn {
+  position: absolute; top: 10px; right: 14px; z-index: 8;
+  display: none; align-items: center;
+  background: rgba(8, 16, 13, 0.9); color: var(--paper-soft);
+  border: 2px solid var(--panel-border);
+  font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 7px 14px; border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  transition: color .15s, border-color .15s;
+}
+.vn.storying .skip-btn { display: inline-flex; }
+.skip-btn:hover { color: #fff; border-color: rgba(255,255,255,.5); }
+@media (max-width: 620px) {
+  .skip-btn { top: 86px; }
+}
+
+/* Reserve room for the OK button while the story is playing. */
+.dialog-inner { transition: padding-bottom .3s ease; }
+.vn.storying .dialog-inner { padding-bottom: 58px; }
+
+>>>>>>> Stashed changes
 .content-area { position: relative; display: flex; min-height: 0; }
 .phase { display: flex; flex-direction: column; width: 100%; min-height: 0; }
 
@@ -193,6 +296,35 @@
   font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 6px;
 }
+<<<<<<< Updated upstream
+=======
+.eyebrow.choose { margin-top: 16px; margin-bottom: 0; }
+
+/* ── Scenario title card (start of every moment) ───────────────────────── */
+.scene-card {
+  position: absolute; inset: 0; z-index: 9;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; text-align: center; padding: 24px; cursor: pointer;
+  background: rgba(4, 10, 8, 0.78);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.sc-kicker {
+  font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent);
+}
+.sc-title {
+  font-size: clamp(28px, 6vw, 44px); font-weight: 900; color: #fff;
+  text-transform: uppercase; letter-spacing: .04em;
+  text-shadow: 4px 4px 0 rgba(0,0,0,.45);
+}
+.sc-tag {
+  font-size: 12px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: #08110d; padding: 8px 22px;
+  clip-path: var(--clip-tab);
+  filter: drop-shadow(3px 3px 0 rgba(0,0,0,.4));
+}
+.sc-hint { margin-top: 12px; font-size: 11.5px; color: rgba(255,255,255,.55); letter-spacing: .05em; }
+>>>>>>> Stashed changes
 .anote {
   font-size: 12.5px; font-style: italic; margin-top: 12px; padding: 10px 13px;
   background: rgba(255, 205, 90, 0.14); border: 1px solid rgba(255, 205, 90, 0.4);
@@ -204,22 +336,23 @@
 .choices.locked { pointer-events: none; }
 .btn {
   position: relative; overflow: hidden;
-  background: linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05));
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: var(--r-md); padding: 13px 15px; font-size: 14.5px; color: var(--paper);
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  border-left: 5px solid var(--accent, #7CE0BC);
+  border-radius: 0; padding: 13px 15px; font-size: 14.5px; color: var(--paper);
   text-align: left; line-height: 1.45; display: flex; align-items: center; gap: 11px;
-  transition: transform .16s var(--ease-out), box-shadow .16s var(--ease-out),
-              background .16s, border-color .16s;
+  transition: transform .14s var(--ease-out), box-shadow .14s var(--ease-out),
+              background .14s, border-color .14s;
 }
 .btn:hover {
-  background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+  background: rgba(255, 255, 255, 0.14);
   border-color: var(--accent, #7CE0BC);
   transform: translateX(4px);
-  box-shadow: -4px 0 0 0 var(--accent, #7CE0BC), 0 6px 18px rgba(0,0,0,.35);
+  box-shadow: var(--shadow-hard);
 }
 .btn:active { transform: translateX(4px) scale(.99); }
 .ltr {
-  width: 26px; height: 26px; border-radius: 8px; display: flex;
+  width: 26px; height: 26px; border-radius: 0; display: flex;
   align-items: center; justify-content: center; font-size: 13px; font-weight: 800;
   flex-shrink: 0; color: #fff;
 }
@@ -250,18 +383,21 @@
 /* ── Action row ────────────────────────────────────────────────────────── */
 .rowbtns { display: flex; gap: 9px; margin-top: 14px; }
 .gbtn {
-  flex: 1; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.24);
-  border-radius: var(--r-md); padding: 12px; font-size: 13px; font-weight: 600; color: #fff;
+  flex: 1; background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.24);
+  border-radius: 0; padding: 12px; font-size: 13px; font-weight: 700; color: #fff;
+  text-transform: uppercase; letter-spacing: .04em;
   transition: background .15s, transform .15s;
 }
-.gbtn:hover { background: rgba(255,255,255,.2); }
+.gbtn:hover { background: rgba(255,255,255,.18); }
 .gbtn:active { transform: scale(.97); }
 .nbtn {
-  flex: 2; background: #fff; border-radius: var(--r-md); padding: 13px;
-  font-size: 14.5px; font-weight: 800; transition: transform .15s, box-shadow .15s;
+  flex: 2; background: #fff; border-radius: 0; padding: 13px;
+  font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em;
+  box-shadow: var(--shadow-2);
+  transition: transform .15s, box-shadow .15s;
 }
-.nbtn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
-.nbtn:active { transform: translateY(0) scale(.98); }
+.nbtn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 rgba(0,0,0,.4); }
+.nbtn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
 
 /* Tap-to-continue hint (shown while narration types / waits) */
 .tap-hint {
@@ -280,13 +416,15 @@
 .title-logo-wrap { margin-bottom: 18px; }
 .title-logo { width: 104px; height: 104px; object-fit: contain; filter: drop-shadow(0 8px 18px rgba(0,0,0,.4)); }
 .tgame { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.7); margin-bottom: 10px; }
-.tepi { font-size: 34px; font-weight: 800; color: #fff; margin-bottom: 9px; min-height: 1.2em; letter-spacing: -.01em; }
+.tepi { font-size: 34px; font-weight: 900; color: #fff; margin-bottom: 9px; min-height: 1.2em; text-transform: uppercase; letter-spacing: .04em; text-shadow: 4px 4px 0 rgba(0,0,0,.4); }
 .tsub { font-size: 15px; color: rgba(255,255,255,.82); line-height: 1.65; margin-bottom: 28px; }
 .title-cta { margin-bottom: 4px; }
 .sbtn {
-  background: linear-gradient(180deg, #fff, #eafff6); border-radius: var(--r-pill);
-  padding: 16px 36px; font-size: 16px; font-weight: 800; color: #12613f;
-  box-shadow: var(--shadow-2);
+  background: #fff; border-radius: 0;
+  padding: 16px 38px; font-size: 15px; font-weight: 800; color: #12613f;
+  text-transform: uppercase; letter-spacing: .08em;
+  border: 3px solid #0e3f2a;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.45);
 }
 .tnote { font-size: 11.5px; color: rgba(255,255,255,.5); margin-top: 14px; }
 
