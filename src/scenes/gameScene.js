@@ -58,26 +58,15 @@ export function createGameScene(app) {
     ]),
   ]);
 
-  // ── Stage (characters) ───────────────────────────────────────────────────
-  // ── Stage: angel, focus dim layer, character portrait, speech bubble ─────
+  // ── Stage: angel, focus dim layer, character portrait ───────────────────
   // DOM order matters: the dim layer paints ABOVE the angel (and blurs the
-  // whole backdrop behind it) but BELOW the portrait and the speech bubble, so
-  // when a character talks, everything blurs and darkens except the talker and
-  // the words coming out of them.
+  // whole backdrop behind it) but BELOW the portrait, so when a character
+  // talks, everything blurs and darkens except the talker.
   const angel = createAngel(G.am, G.al);
   const focusDim = el('div.focus-dim');
   const portrait = createPortrait(moment().char);
 
   const stage = el('div.stage', {}, [angel.el, focusDim, portrait.el]);
-
-  // The speech bubble: character lines type HERE, next to the talker, with a
-  // tail pointing at them — not in the narrator box at the bottom.
-  const speechName = el('div.speech-name');
-  const speechText = el('div.speech-text');
-  const speech = el('div.speech', {}, [speechName, speechText]);
-
-  const skipBtn = el('button.skip-btn', { type: 'button' }, ['Skip story ▸▸']);
-  const stage = el('div.stage', {}, [angel.el, focusDim, portrait.el, speech, skipBtn]);
 
   // ── Dialog box (narrator + choices) ──────────────────────────────────────
   const nameplate = el('div.nameplate');
