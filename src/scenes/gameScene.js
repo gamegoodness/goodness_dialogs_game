@@ -1,26 +1,24 @@
 /**
  * gameScene.js — the interactive heart of the game (visual-novel style).
  *
- * The screen is a full-screen STAGE:
- *   - a HUD across the top (progress dots + virtue tag + goodness score),
- *   - the featured CHARACTER portrait standing on the scenario background,
- *   - the Good Angel floating as a guide,
- *   - a DIALOG BOX at the bottom that tells the story and presents choices.
+ * Every moment now plays as a STORY, not a single message:
  *
- * The dialog box holds a swappable CONTENT AREA that crossfades between the
- * three phases of every moment:
- *      c1  ->  first choice
- *      c2  ->  second choice ("what happens next")
- *      outcome -> result banner + reflection + Next/Try-differently
+ *   1. A scenario TITLE CARD introduces the scene ("Moment 1 · The lunchbox").
+ *   2. The story plays beat by beat (moment.intro / branch.story). Narrator
+ *      beats explain the scenario; character beats put the game in FOCUS MODE:
+ *      the background and HUD blur + darken behind a dim layer while the
+ *      speaking character's portrait and their slowly-typed line take all the
+ *      attention. An OK button advances from beat to beat; a Skip button jumps
+ *      straight to the choices (also useful on "Try differently" replays).
+ *   3. After the last beat the choices appear as the game menu.
  *
- * The stage (HUD, angel, portrait) stays persistent so the angel keeps floating
- * and the dots/score animate in place, rather than the whole screen snapping.
- * Advancing to the next moment crossfades the background, swaps the portrait,
- * and animates the progress dots.
+ * Phases per moment:  c1 (story + first choice)  ->  c2 (story + second
+ * choice)  ->  outcome (result banner + reflection + Next / Try differently).
  *
- * Every navigation action is wrapped in `guard.run` (global transition lock),
- * and the choices container self-locks on first click, so rapid-clicking during
- * an animation can never trigger a double transition or a broken state.
+ * The stage (HUD, angel, portrait, dim layer) is persistent; only the dialog
+ * content area swaps between phases. Every navigation action is wrapped in
+ * `guard.run` (global transition lock) and the choices container self-locks on
+ * first click, so rapid clicking can never double-fire a transition.
  */
 
 import { el } from '../engine/dom.js';
@@ -32,7 +30,7 @@ import { createPortrait } from '../components/portrait.js';
 import { createProgressDots } from '../components/progressDots.js';
 import { createScorePill } from '../components/scoreBadge.js';
 import { createChoiceButton } from '../components/choiceButton.js';
-import { bgImage } from '../data/config.js';
+import { TIMING, bgImage } from '../data/config.js';
 import { CHARACTER_NAMES } from '../data/scenarios.js';
 import {
   G, moment, branch, outcome, total, isLastMoment,
@@ -42,6 +40,7 @@ import {
 export function createGameScene(app) {
   const typers = [];
   const track = (tw) => { typers.push(tw); return tw; };
+  let alive = true;
 
   // ── HUD (top bar) ────────────────────────────────────────────────────────
   const momentLabel = el('div.ep');
@@ -59,21 +58,17 @@ export function createGameScene(app) {
     ]),
   ]);
 
-<<<<<<< Updated upstream
   // ── Stage (characters) ───────────────────────────────────────────────────
-=======
   // ── Stage: angel, focus dim layer, character portrait, speech bubble ─────
   // DOM order matters: the dim layer paints ABOVE the angel (and blurs the
   // whole backdrop behind it) but BELOW the portrait and the speech bubble, so
   // when a character talks, everything blurs and darkens except the talker and
   // the words coming out of them.
->>>>>>> Stashed changes
   const angel = createAngel(G.am, G.al);
+  const focusDim = el('div.focus-dim');
   const portrait = createPortrait(moment().char);
-<<<<<<< Updated upstream
-  const stage = el('div.stage', {}, [angel.el, portrait.el]);
-=======
->>>>>>> Stashed changes
+
+  const stage = el('div.stage', {}, [angel.el, focusDim, portrait.el]);
 
   // The speech bubble: character lines type HERE, next to the talker, with a
   // tail pointing at them — not in the narrator box at the bottom.
@@ -87,23 +82,22 @@ export function createGameScene(app) {
   // ── Dialog box (narrator + choices) ──────────────────────────────────────
   const nameplate = el('div.nameplate');
   const contentArea = el('div.content-area');
-<<<<<<< Updated upstream
-=======
-  // The OK button MOVES between containers: it sits inside the speech bubble
-  // while a character talks, and inside the dialog box during narration.
+
   const okBtn = el('button.ok-btn', { type: 'button' }, [
     'OK ', el('span.arr', {}, ['▸']),
   ]);
->>>>>>> Stashed changes
+  const skipBtn = el('button.skip-btn', { type: 'button' }, ['Skip story ▸▸']);
   const dialog = el('div.dialog', {}, [
     nameplate,
+    skipBtn,
     el('div.dialog-inner', {}, [contentArea]),
+    okBtn,
   ]);
 
   const layer = el('div.scene.vn', {}, [hud, stage, dialog]);
 
   // Set per-moment chrome: label, virtue tag chip, and theme colour (--tc drives
-  // the nameplate, tag chip and portrait glow).
+  // the nameplate, tag chip, OK button and portrait glow).
   function applyMomentChrome() {
     const s = moment();
     momentLabel.textContent = `Moment ${s.id} of ${total()}`;
@@ -119,25 +113,16 @@ export function createGameScene(app) {
     );
   }
 
-<<<<<<< Updated upstream
-=======
-  /** Focus mode on/off: who is talking right now (null = narrator).
-   * Character: dim + blur everything, pop the portrait, show the speech
-   * bubble by the character (the bottom dialog box recedes), OK in bubble.
-   * Narrator: bubble hides, dialog box returns, OK back in the dialog. */
+
+  /** Focus mode on/off: who is talking right now (null = narrator). */
   function setFocus(who) {
     if (who) {
-      layer.classList.add('focused', 'charline');
+      layer.classList.add('focused');
       portrait.speak(who);
-      speechName.textContent = CHARACTER_NAMES[who] || who;
-      speech.classList.remove('speech-pop');
-      void speech.offsetWidth;
-      speech.classList.add('speech-pop');
-      speech.appendChild(okBtn);
+      setNameplate('🗣️', CHARACTER_NAMES[who] || who);
     } else {
-      layer.classList.remove('focused', 'charline');
+      layer.classList.remove('focused');
       setNameplate('📖', 'Story');
-      dialog.appendChild(okBtn);
     }
   }
 
@@ -168,12 +153,11 @@ export function createGameScene(app) {
     for (let i = 0; i < beats.length && !run.cancelled && alive; i++) {
       const beat = beats[i];
       setFocus(beat.who || null);
-      // Character lines type into THEIR speech bubble (slowly); narration
-      // types into the bottom dialog box.
-      const target = beat.who ? speechText : body;
+
+      // Type the line: slow for characters, normal for narration.
       await new Promise((res) => {
         run.resolve = res;
-        run.tw = track(typewrite(target, beat.text, {
+        run.tw = track(typewrite(body, beat.text, {
           charMs: beat.who ? TIMING.dialogueCharMs : TIMING.typeCharMs,
           onDone: res,
         }));
@@ -226,7 +210,7 @@ export function createGameScene(app) {
     });
   }
 
->>>>>>> Stashed changes
+
   // ── Phase content builders ───────────────────────────────────────────────
 
   function choicesRow(buttons) {
@@ -238,36 +222,45 @@ export function createGameScene(app) {
 
   function buildC1() {
     const s = moment();
-    setNameplate('💬', CHARACTER_NAMES[s.char] || 'The story');
     const body = el('div.ctext');
-    const note = s.ambig
-      ? el('div.anote', {}, ['⚠️ ' + (s.ambigNote || 'Both choices have real costs.')])
-      : null;
-    const children = [body];
-    if (note) children.push(note);
-    children.push(choicesRow([
-      createChoiceButton({ letter: 'A', text: s.A.text, color: s.tc, index: 0, onSelect: chooseC1 }),
-      createChoiceButton({ letter: 'B', text: s.B.text, color: s.tc, index: 1, onSelect: chooseC1 }),
-    ]));
-    const content = el('div.phase', {}, children);
-    queueType(body, s.sit);
+    const content = el('div.phase', {}, [body]);
+    content._start = async () => {
+      await playStory({
+        beats: (s.intro && s.intro.length) ? s.intro : [{ who: null, text: s.sit }],
+        body, summary: s.sit,
+      });
+      if (!alive) return;
+      setNameplate('✦', 'Your choice');
+      if (s.ambig) {
+        content.appendChild(el('div.anote', {}, ['⚠️ ' + (s.ambigNote || 'Both choices have real costs.')]));
+      }
+      content.appendChild(el('div.eyebrow.choose', {}, ['What should Milo do?']));
+      content.appendChild(choicesRow([
+        createChoiceButton({ letter: 'A', text: s.A.text, color: s.tc, index: 0, onSelect: chooseC1 }),
+        createChoiceButton({ letter: 'B', text: s.B.text, color: s.tc, index: 1, onSelect: chooseC1 }),
+      ]));
+    };
     return content;
   }
 
   function buildC2() {
     const s = moment();
     const br = branch();
-    setNameplate('💬', CHARACTER_NAMES[s.char] || 'The story');
     const body = el('div.ctext');
-    const content = el('div.phase', {}, [
-      el('div.eyebrow', {}, ['What happens next']),
-      body,
-      choicesRow([
+    const content = el('div.phase', {}, [body]);
+    content._start = async () => {
+      await playStory({
+        beats: (br.story && br.story.length) ? br.story : [{ who: null, text: br.sit }],
+        body, summary: br.sit,
+      });
+      if (!alive) return;
+      setNameplate('✦', 'Your choice');
+      content.appendChild(el('div.eyebrow.choose', {}, ['What happens next?']));
+      content.appendChild(choicesRow([
         createChoiceButton({ letter: 'A', text: br.A2.text, color: s.tc, index: 0, onSelect: chooseC2 }),
         createChoiceButton({ letter: 'B', text: br.B2.text, color: s.tc, index: 1, onSelect: chooseC2 }),
-      ]),
-    ]);
-    queueType(body, br.sit);
+      ]));
+    };
     return content;
   }
 
@@ -316,23 +309,13 @@ export function createGameScene(app) {
     children.push(el('div.rowbtns', {}, [tryBtn, nextBtn]));
 
     const content = el('div.phase', {}, children);
-
-    // Reveal outcome text with typewriter after the card animates in.
-    queueType(otxt, oc.txt, 260);
+    content._start = () => {
+      // Reveal outcome text with typewriter after the card animates in.
+      setTimeout(() => { if (alive) track(typewrite(otxt, oc.txt)); }, 260);
+    };
     // Sound cue matching the score of this outcome.
     (outcome().s > 0 ? sfx.positive : outcome().s < 0 ? sfx.negative : sfx.advance)();
     return content;
-  }
-
-  // Defer typing until the element is actually in the DOM + settled.
-  const pendingTypes = [];
-  function queueType(elNode, text, delay = 0) {
-    pendingTypes.push({ elNode, text, delay });
-  }
-  function flushTypes() {
-    pendingTypes.splice(0).forEach(({ elNode, text, delay }) => {
-      setTimeout(() => track(typewrite(elNode, text)), delay);
-    });
   }
 
   // ── Phase rendering ──────────────────────────────────────────────────────
@@ -346,7 +329,7 @@ export function createGameScene(app) {
   async function renderPhase(direction) {
     const content = build(G.phase);
     await swapScene(contentArea, content, direction);
-    flushTypes();
+    if (content._start) content._start();
   }
 
   // ── Handlers (all guarded) ───────────────────────────────────────────────
@@ -384,12 +367,14 @@ export function createGameScene(app) {
       const wasLast = isLastMoment();
       goNext();
       if (wasLast) { await app.toFinal(); return; }
-      // New moment: crossfade background, swap portrait, retitle, animate dots.
+      // New moment: crossfade background, swap portrait, retitle, animate dots,
+      // then introduce the scenario with its title card before the story plays.
       app.background.crossfadeTo({ gradient: moment().bg, image: bgImage(moment().image) });
       applyMomentChrome();
       portrait.show(moment().char);
       dots.setCurrent(G.idx);
       angel.speak(G.al, G.am);
+      await showSceneCard();
       await renderPhase('forward');
     });
   }
@@ -399,14 +384,18 @@ export function createGameScene(app) {
     el: layer,
     get bg() { return { gradient: moment().bg, image: bgImage(moment().image) }; },
     enter() {
-      // First phase content slides in and starts typing.
       const content = build(G.phase);
       content.classList.add('scene-in-fade');
       contentArea.appendChild(content);
       void content.offsetWidth;
-      flushTypes();
+      (async () => {
+        await showSceneCard();
+        if (alive && content._start) content._start();
+      })();
     },
     destroy() {
+      alive = false;
+      if (activeRun) activeRun.skip();
       typers.forEach((t) => t && t.cancel && t.cancel());
     },
   };
