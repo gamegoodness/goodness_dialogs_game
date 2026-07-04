@@ -1,0 +1,192 @@
+# Milo & the Good Angel
+
+A branching moral-choice game for children (ages 6–12). The player guides Milo
+through six real-life "moments" — each a two-step choice with real consequences,
+narrated by the floating Good Angel. **Episode 1: Empathy.**
+
+This repo is a production rebuild of the original single-file prototype, with the
+same scenarios, choices, scoring and flow — rebuilt around **animation and game
+feel**: typewriter dialogue, animated scene/background transitions, a floating
+angel, tactile choice buttons, and animated score/virtue reveals.
+
+---
+
+## Quick start
+
+No build step, no dependencies. You need [Node.js](https://nodejs.org) (any
+recent version) only to run the tiny local static server (ES modules must be
+served over `http://`, not opened as `file://`).
+
+```bash
+npm start
+# → open http://localhost:5173
+```
+
+Or with any static server you like, e.g. `npx serve`, `python -m http.server`.
+For hosting: upload the folder to any static host (GitHub Pages, Netlify, …) —
+there is nothing to compile.
+
+---
+
+## Tech stack — and why
+
+**Vanilla JavaScript + native ES modules + CSS animations. No framework, no
+bundler, no build step.**
+
+The game is a small state machine whose value is in *hand-tuned motion*. A
+framework's re-render cycle fights precise typewriter/transition timing and adds
+a toolchain for no real benefit at this size. Native ES modules give clean
+multi-file structure with **zero install**, animation lives in CSS keyframes
+driven by a thin JS orchestration layer, and the whole thing runs on any static
+host. It stays trivial to demo and easy to extend with new episodes.
+
+---
+
+## Folder structure
+
+```
+index.html              Entry point. Loads styles + src/main.js (module).
+serve.js                Zero-dependency local static server (npm start).
+package.json            Scripts: start, gen-assets.
+scripts/gen-assets.js   Regenerates the PNG placeholder art.
+
+assets/
+  images/               All game art (placeholders — drop-in swappable).
+  sounds/               Optional; sound is synthesised at runtime by default.
+
+src/
+  main.js               Bootstrap + top-level scene router (title↔game↔final).
+  data/
+    scenarios.js        THE CONTENT — Episode 1 moments (source of truth).
+    episodes.js         Episode registry + title/discussion metadata.
+    config.js           Asset paths + ALL animation timings.
+  engine/
+    state.js            Game state machine (score, virtues, branching).
+    typewriter.js       Character-by-character text reveal + tap-to-skip.
+    transitions.js      Scene swapping + rapid-click guard.
+    audio.js            Optional WebAudio UI blips (no files needed).
+    dom.js              Tiny element helper.
+  components/
+    background.js       Two-layer crossfading background.
+    angel.js            The floating Good Angel narrator.
+    progressDots.js     Animated "moment X of N" dots.
+    scoreBadge.js       Score pill + count-up ring.
+    choiceButton.js     Tactile choice button (hover/press/ripple).
+    virtueChip.js       Virtue badges that pop in one at a time.
+  scenes/
+    titleScene.js       Opening screen.
+    gameScene.js        The interactive core (all six moments).
+    finalScene.js       Results + reflection + replay.
+  styles/
+    reset.css           Minimal reset.
+    tokens.css          Colours, radii, easing (visual constants).
+    animations.css      Every keyframe + animation class.
+    main.css            Layout + component styling (incl. responsive).
+```
+
+### How the pieces fit
+
+- **`data/`** is pure content + configuration. You can build a whole new episode
+  by touching only this folder.
+- **`engine/`** is episode-agnostic machinery (state, typewriter, transitions).
+- **`components/`** are reusable animated UI pieces returning real DOM nodes.
+- **`scenes/`** compose components into the three screens. `gameScene` keeps a
+  *persistent shell* (angel + top bar) and crossfades a *content area* between
+  the three phases of each moment (`c1` → `c2` → `outcome`), so the angel keeps
+  floating and the dots/score animate in place.
+
+---
+
+## The three things you'll most likely want to change
+
+### (a) Swap the placeholder art
+
+Every image is a PNG in [`assets/images/`](assets/images/). To replace one, just
+**drop in a real PNG with the same filename** — no code changes:
+
+| File | What it is |
+|------|------------|
+| `angel.png` | The Good Angel narrator (transparent PNG) |
+| `milo.png`, `priya.png`, `jai.png`, `sam.png` | Character art |
+| `bg-title.png`, `bg-final.png` | Title / results backgrounds |
+| `bg-scenario-1.png` … `bg-scenario-6.png` | Per-moment backgrounds |
+| `logo.png` | App logo / favicon |
+| `icon-*.png` | Decorative icons |
+
+To point at a *different* filename or add new art, edit the `ASSETS` map in
+[`src/data/config.js`](src/data/config.js). A scenario's background is set by its
+`image:` field in `scenarios.js`.
+
+The placeholders are generated by `npm run gen-assets`
+([`scripts/gen-assets.js`](scripts/gen-assets.js)) — a dependency-free PNG
+writer. Edit it if you want different placeholders; it won't overwrite real art
+you've dropped in unless the filenames collide.
+
+### (b) Add a new episode / scenario
+
+1. Copy [`src/data/scenarios.js`](src/data/scenarios.js) to `episode2.js` and
+   edit the moments. Each **moment** has this shape (see the file's header
+   comment for the full spec):
+
+   ```js
+   {
+     id, title, tag, tc /* theme colour */, bg /* css gradient */, image,
+     sit,                       // opening narration
+     am, al,                    // angel mood + line
+     ambig, ambigNote,          // optional "hard choice" note
+     A: { text, L2: { sit, am, al,
+        A2: { text, s /* score */, oc: { icon, title, col, bg, txt, virt } },
+        B2: { ... } } },
+     B: { ... },
+     reflect                    // kid-facing reflection question
+   }
+   ```
+
+2. Register it in [`src/data/episodes.js`](src/data/episodes.js): import the
+   array and add an `EPISODES` entry (with `name`, `subtitle`, `meta`,
+   `discussion`, `curriculum`, `moments`).
+3. Point `ACTIVE_EPISODE` at it (or add episode selection to the title screen).
+
+The engine and all scenes are episode-agnostic — no other changes needed. Add a
+matching `bg-scenario-N.png` for each new moment, or reuse existing ones.
+
+**To add a *single* scenario to Episode 1**, just add one more moment object to
+the `EPISODE_1` array — the progress dots, "moment X of N", and final score all
+adapt automatically.
+
+### (c) Adjust animation timing / style
+
+All durations live in one place: the `TIMING` object in
+[`src/data/config.js`](src/data/config.js) — typewriter speed, scene-transition
+lengths, background crossfade, angel float, choice stagger, score count-up,
+virtue pop, etc. These are also exported to CSS as custom properties (e.g.
+`--scene-in`, `--angel-idle`), so JS- and CSS-driven animation stay in sync.
+
+- **Speed of typed text:** `TIMING.typeCharMs` (and `typePunctMs` for the pause
+  after punctuation).
+- **Transition feel/curves:** easing lives in
+  [`src/styles/tokens.css`](src/styles/tokens.css) (`--ease-out`,
+  `--ease-bounce`); the keyframes themselves are in
+  [`src/styles/animations.css`](src/styles/animations.css).
+- Everything honours `prefers-reduced-motion` — animations collapse to instant
+  for players who request it.
+
+---
+
+## Design notes
+
+- **No broken states on rapid clicks.** Every navigation runs through a global
+  transition guard (`engine/transitions.js`), and choice rows self-lock on the
+  first click, so double-clicks and mash-clicks can't trigger overlapping
+  transitions.
+- **Tap to skip.** A tap/click (or Space/Enter) instantly finishes the
+  currently-typing line.
+- **Preserved from the prototype:** the kid reflection box, the "for teachers and
+  parents" discussion prompts, the per-moment "try differently" replay, the full
+  branching structure, and every scenario's exact text, scores and virtues.
+
+---
+
+## License
+
+MIT.

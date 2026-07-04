@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1A2E26" />
+  <title>Milo &amp; the Good Angel — Episode 1: Empathy</title>
+  <meta name="description" content="A branching moral-choice game for children. Real moments, real choices, no perfect answers." />
+
+  <!-- Styles: reset → tokens → animations → layout -->
+  <link rel="stylesheet" href="./src/styles/reset.css" />
+  <link rel="stylesheet" href="./src/styles/tokens.css" />
+  <link rel="stylesheet" href="./src/styles/animations.css" />
+  <link rel="stylesheet" href="./src/styles/main.css" />
+
+  <link rel="icon" href="./assets/images/logo.png" />
+</head>
+<body>
+  <!-- The game mounts here. #bg holds the crossfading background layers,
+       #scene-root holds the active scene. -->
+  <div id="app">
+    <div id="bg"></div>
+    <div id="scene-root"></div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

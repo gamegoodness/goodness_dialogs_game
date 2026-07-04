@@ -1,0 +1,40 @@
+/* tokens.css — design tokens (colours, radii, shadows, motion easing).
+ * Animation *durations* live in JS (config.js → --scene-out etc.); this file
+ * holds the visual constants and easing curves. */
+:root {
+  /* surfaces */
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.25);
+
+  /* text */
+  --ink: #111;
+  --ink-soft: #444;
+  --ink-faint: rgba(255, 255, 255, 0.7);
+
+  /* radii */
+  --r-sm: 7px;
+  --r-md: 11px;
+  --r-lg: 16px;
+  --r-pill: 20px;
+
+  /* shadow */
+  --shadow-1: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.18);
+
+  /* motion easing (durations come from JS via config.js) */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* fallbacks in case JS hasn't set them yet */
+  --scene-out: 320ms;
+  --scene-in: 420ms;
+  --bg-crossfade: 800ms;
+  --angel-enter: 620ms;
+  --angel-idle: 4200ms;
+  --choice-reveal: 380ms;
+  --dot-change: 450ms;
+  --virtue-pop: 520ms;
+}

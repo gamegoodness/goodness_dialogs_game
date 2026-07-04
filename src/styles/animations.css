@@ -1,0 +1,101 @@
+/* animations.css — all keyframes + animation utility classes.
+ * Durations are driven by CSS vars set from config.js so you can retune the
+ * whole game's feel in one place (see README → adjust animation timing). */
+
+/* ── Scene transitions ─────────────────────────────────────────────────── */
+@keyframes sceneInForward { from { opacity: 0; transform: translateX(24px) scale(.99); } to { opacity: 1; transform: none; } }
+@keyframes sceneInBack    { from { opacity: 0; transform: translateX(-24px) scale(.99); } to { opacity: 1; transform: none; } }
+@keyframes sceneInFade    { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes sceneOutForward { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(-20px) scale(.99); } }
+@keyframes sceneOutBack    { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(20px) scale(.99); } }
+@keyframes sceneOutFade    { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
+
+.scene-in-forward { animation: sceneInForward var(--scene-in) var(--ease-out) both; }
+.scene-in-back    { animation: sceneInBack var(--scene-in) var(--ease-out) both; }
+.scene-in-fade    { animation: sceneInFade var(--scene-in) var(--ease-out) both; }
+.scene-out-forward { animation: sceneOutForward var(--scene-out) var(--ease-in-out) both; }
+.scene-out-back    { animation: sceneOutBack var(--scene-out) var(--ease-in-out) both; }
+.scene-out-fade    { animation: sceneOutFade var(--scene-out) var(--ease-in-out) both; }
+
+/* ── Angel ─────────────────────────────────────────────────────────────── */
+@keyframes angelEnter {
+  0%   { opacity: 0; transform: translateY(16px) scale(.9); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.03); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes angelIdle {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-7px) rotate(1deg); }
+}
+@keyframes haloPulse {
+  0%, 100% { opacity: .55; transform: scale(1); }
+  50%      { opacity: .9; transform: scale(1.08); }
+}
+.angel-enter { animation: angelEnter var(--angel-enter) var(--ease-bounce) both; }
+.angel-img { animation: angelIdle var(--angel-idle) var(--ease-in-out) infinite; }
+
+/* ── Typewriter caret ──────────────────────────────────────────────────── */
+@keyframes caretBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.tw-caret {
+  display: inline-block;
+  width: 2px; height: 1em;
+  margin-left: 1px;
+  transform: translateY(2px);
+  background: currentColor;
+  opacity: .6;
+  animation: caretBlink .8s steps(1) infinite;
+}
+
+/* ── Choice buttons ────────────────────────────────────────────────────── */
+@keyframes btnEnter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes rippleOut { from { transform: scale(0); opacity: .7; } to { transform: scale(1); opacity: 0; } }
+@keyframes chosenPulse { 0% { transform: scale(1); } 40% { transform: scale(1.03); } 100% { transform: scale(1); } }
+.btn-enter { animation: btnEnter var(--choice-reveal) var(--ease-out) both; }
+.btn-chosen { animation: chosenPulse .45s var(--ease-bounce); box-shadow: 0 0 0 3px var(--accent, #1D9E75), var(--shadow-1) !important; }
+.ripple { position: absolute; border-radius: 50%; pointer-events: none; transform: scale(0); animation: rippleOut .6s var(--ease-out) forwards; }
+
+/* ── Progress dots ─────────────────────────────────────────────────────── */
+@keyframes dotFlip { 0% { transform: scale(1); } 45% { transform: scale(1.55); } 100% { transform: scale(1); } }
+@keyframes dotPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.5); } 50% { box-shadow: 0 0 0 4px rgba(255,255,255,0); } }
+.dot { transition: background var(--dot-change) var(--ease-out), transform var(--dot-change) var(--ease-out); }
+.dot.on { animation: dotPulse 2s ease-in-out infinite; }
+.dot-flip { animation: dotFlip var(--dot-change) var(--ease-bounce); }
+
+/* ── Score pill ────────────────────────────────────────────────────────── */
+@keyframes pillBump { 0% { transform: scale(1); } 35% { transform: scale(1.22); } 100% { transform: scale(1); } }
+.pill-bump { animation: pillBump .5s var(--ease-bounce); }
+
+/* ── Outcome card ──────────────────────────────────────────────────────── */
+@keyframes ocardReveal { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes iconPop { 0% { transform: scale(0) rotate(-20deg); } 60% { transform: scale(1.25) rotate(6deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes vtagPop { 0% { opacity: 0; transform: scale(.4); } 60% { opacity: 1; transform: scale(1.15); } 100% { transform: scale(1); } }
+.ocard-reveal { animation: ocardReveal .5s var(--ease-out) both; }
+.ocard-reveal .oicon { animation: iconPop .6s .15s var(--ease-bounce) both; display: inline-block; }
+.vtag-pop { animation: vtagPop var(--virtue-pop) .35s var(--ease-bounce) both; }
+
+/* ── Reflection box ────────────────────────────────────────────────────── */
+@keyframes rboxEnter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.rbox-enter { animation: rboxEnter .45s .3s var(--ease-out) both; }
+.rbox-collapse { animation: rboxEnter .3s reverse both; overflow: hidden; }
+
+/* ── Final screen ──────────────────────────────────────────────────────── */
+@keyframes fringIn { 0% { opacity: 0; transform: scale(.5) rotate(-12deg); } 60% { transform: scale(1.1) rotate(4deg); } 100% { opacity: 1; transform: none; } }
+@keyframes chipPop { 0% { opacity: 0; transform: scale(.3) translateY(8px); } 60% { opacity: 1; transform: scale(1.12); } 100% { transform: scale(1); } }
+.fring-in { animation: fringIn .7s var(--ease-bounce) both; }
+.chip-hidden { opacity: 0; transform: scale(.3); }
+.chip-pop { animation: chipPop var(--virtue-pop) var(--ease-bounce) both; }
+
+/* ── Title ─────────────────────────────────────────────────────────────── */
+@keyframes floatLogo { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes ctaPulse { 0%,100% { transform: scale(1); box-shadow: var(--shadow-2); } 50% { transform: scale(1.04); box-shadow: 0 8px 26px rgba(0,0,0,.28); } }
+.title-logo { animation: floatLogo 3.6s var(--ease-in-out) infinite; }
+.sbtn { animation: ctaPulse 2.4s var(--ease-in-out) infinite; }
+
+/* ── Reduced motion: disable everything ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}

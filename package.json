@@ -1,0 +1,14 @@
+{
+  "name": "goodness-dialogs-game",
+  "version": "1.0.0",
+  "description": "Milo & the Good Angel — a branching moral-choice game for children. Episode 1: Empathy.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node serve.js",
+    "dev": "node serve.js",
+    "gen-assets": "node scripts/gen-assets.js"
+  },
+  "keywords": ["game", "children", "education", "empathy", "goodness", "branching-narrative"],
+  "license": "MIT",
+  "private": true
+}
