@@ -17,12 +17,20 @@
  *
  *   {
  *     id, title, tag, tc (theme colour), bg (css gradient), image, char,
- *     sit  : opening narration,
+ *     sit  : one-line scene summary (used when the player skips the story),
+ *     intro: the STORY, an array of dialog beats played one at a time:
+ *              { who: null, text }        -> narrator (scene explanation)
+ *              { who: 'priya', text }     -> that character speaks (focus mode:
+ *                                            background blurs + darkens, their
+ *                                            portrait takes the stage)
+ *            The player taps OK to move from beat to beat, like a
+ *            dialog/visual-novel game. Choices appear after the last beat.
  *     am   : angel mood key (see ANGEL_FACES),
  *     al   : angel line,
  *     ambig: boolean, ambigNote?: string,
  *     A / B: first-level choices, each with:
- *        text, L2: { sit, am, al, A2:{...}, B2:{...} }
+ *        text, L2: { sit, story (dialog beats, same shape as intro), am, al,
+ *                    A2:{...}, B2:{...} }
  *        where A2/B2 = { text, s (score delta), oc: outcome card }
  *        oc = { icon (emoji), title, col, bg, txt, virt }
  *     reflect: the kid-facing reflection question
@@ -35,9 +43,12 @@ export const ANGEL_FACES = {
   waiting: '⏳', neutral: '😌',
 };
 
-/** Display names for the dialog nameplate, keyed by ASSETS.characters key. */
+/** Display names for the dialog nameplate, keyed by ASSETS.characters key.
+ * (mum/dad/teacher currently render with the common placeholder portrait;
+ * add real art in ASSETS.characters + PLACEHOLDERS.character = null later.) */
 export const CHARACTER_NAMES = {
   milo: 'Milo', priya: 'Priya', jai: 'Jai', sam: 'Sam',
+  mum: 'Mum', dad: 'Dad', teacher: 'Teacher',
 };
 
 export const EPISODE_1 = [
@@ -46,11 +57,23 @@ export const EPISODE_1 = [
     bg: 'linear-gradient(135deg,#1D9E75,#0F6E56)',
     image: 'bg-scenario-1.png', char: 'priya',
     sit: "Milo is eating lunch in the school canteen. A classmate, Priya, quietly opens her bag and looks down. There is nothing inside. She says nothing and stares at the table.",
+    intro: [
+      { who: null, text: 'Lunchtime at school. The canteen is loud and full of chatter. Milo sits down and unpacks his lunch.' },
+      { who: 'milo', text: 'Cheese and tomato sandwiches. My favourite!' },
+      { who: null, text: 'Across the table, his classmate Priya quietly opens her bag and looks inside. There is nothing there.' },
+      { who: 'priya', text: 'Oh no... I must have forgotten my lunch at home today.' },
+      { who: null, text: 'She says it almost in a whisper. Then she goes quiet and stares at the table.' },
+    ],
     am: 'worried', al: 'I wonder what Milo will notice...', ambig: false,
     A: {
       text: 'Quietly offer half your sandwich to Priya',
       L2: {
         sit: "Priya looks surprised. \"Thank you... but I don't want to take your food.\" She shakes her head shyly.",
+        story: [
+          { who: null, text: 'Milo slides half of his sandwich across the table to Priya. She looks up, surprised.' },
+          { who: 'priya', text: "Thank you... but I don't want to take your food." },
+          { who: null, text: 'She shakes her head shyly and looks down again.' },
+        ],
         am: 'hopeful', al: 'What Milo says next matters...',
         A2: {
           text: "\"It's okay, I have enough. Please take it.\"", s: 2,
@@ -66,6 +89,10 @@ export const EPISODE_1 = [
       text: 'Look away and keep eating',
       L2: {
         sit: "Your friend beside you whispers: \"Did you notice Priya has nothing to eat today?\"",
+        story: [
+          { who: null, text: 'Milo looks away and keeps eating. A moment later, his friend Jai leans closer and whispers.' },
+          { who: 'jai', text: 'Psst, Milo. Did you notice Priya has nothing to eat today?' },
+        ],
         am: 'waiting', al: "There's still a chance here...",
         A2: {
           text: 'Quietly go and tell a teacher', s: 1,
@@ -84,11 +111,23 @@ export const EPISODE_1 = [
     bg: 'linear-gradient(135deg,#378ADD,#185FA5)',
     image: 'bg-scenario-2.png', char: 'milo',
     sit: 'Milo is playing inside when, crack, a vase falls from a shelf and shatters. It was an accident. Mum comes in and looks at the pieces on the floor.',
+    intro: [
+      { who: null, text: "After school, Milo is playing with a ball inside the house. The shelf with Grandma's vase is very close." },
+      { who: 'milo', text: "One more catch! I've almost got this trick..." },
+      { who: null, text: 'Crack. The ball clips the shelf, and the vase falls and shatters across the floor. It was an accident.' },
+      { who: 'mum', text: 'Milo? What was that sound?' },
+      { who: null, text: 'Mum walks in and looks at the broken pieces on the floor. Then she looks at Milo.' },
+    ],
     am: 'nervous', al: 'The truth, or a story?', ambig: false,
     A: {
       text: "Tell the truth: \"Mum, I knocked it over. It was an accident.\"",
       L2: {
         sit: "Mum's face falls. \"That was Grandma's vase,\" she says quietly.",
+        story: [
+          { who: 'milo', text: 'Mum, I knocked it over. It was an accident.' },
+          { who: 'mum', text: "That was Grandma's vase..." },
+          { who: null, text: "Mum's face falls. She says it very quietly, and the room feels still." },
+        ],
         am: 'hopeful', al: 'Honesty takes courage. Keep going...',
         A2: {
           text: "\"I'm really sorry. I should have been more careful.\"", s: 2,
@@ -104,6 +143,11 @@ export const EPISODE_1 = [
       text: 'Stay quiet, or quietly blame the cat',
       L2: {
         sit: 'Dad comes in. Seeing the pieces, he scolds the cat. The cat looks confused. You know the truth.',
+        story: [
+          { who: null, text: 'Milo stays quiet and steps back from the pieces. Dad walks in and sees the mess.' },
+          { who: 'dad', text: 'Whiskers! Was this you? Bad cat! Outside you go.' },
+          { who: null, text: 'The cat looks confused as it is carried to the door. Milo knows the truth.' },
+        ],
         am: 'sad', al: "The cat can't speak for itself...",
         A2: {
           text: 'Take a breath and tell Dad the truth now', s: 1,
@@ -122,11 +166,23 @@ export const EPISODE_1 = [
     bg: 'linear-gradient(135deg,#D4537E,#993556)',
     image: 'bg-scenario-3.png', char: 'jai',
     sit: "Milo's best friend Jai said something really unkind in front of the whole class yesterday. It hurt. Today Jai comes up quietly and says: \"I'm really sorry. I didn't mean it.\"",
+    intro: [
+      { who: null, text: "Yesterday, Milo's best friend Jai said something really unkind in front of the whole class. It hurt." },
+      { who: null, text: 'Today at school, Jai walks up quietly, looking at the floor.' },
+      { who: 'jai', text: "Hey, Milo... I'm really sorry about yesterday. I didn't mean it." },
+      { who: null, text: 'Jai stands there, waiting nervously for an answer.' },
+    ],
     am: 'gentle', al: 'Forgiveness is one of the hardest things...', ambig: false,
     A: {
       text: "\"Okay. I forgive you.\" Even though it still stings",
       L2: {
         sit: 'Jai looks relieved. But later, Jai says something thoughtless about another classmate.',
+        story: [
+          { who: 'milo', text: 'Okay. I forgive you.' },
+          { who: null, text: 'Jai looks relieved and smiles. But later that day, you hear Jai talking about another classmate.' },
+          { who: 'jai', text: "Did you see Dev's drawing? It looks like a baby drew it!" },
+          { who: null, text: 'That was thoughtless too.' },
+        ],
         am: 'curious', al: "Forgiveness doesn't mean pretending everything is perfect...",
         A2: {
           text: "Gently tell Jai: \"That kind of thing is what hurt me too.\"", s: 2,
@@ -142,6 +198,11 @@ export const EPISODE_1 = [
       text: "\"I'm not ready to forgive you yet.\"",
       L2: {
         sit: 'Jai nods and walks away. At lunch, you sit apart. Jai keeps looking over.',
+        story: [
+          { who: 'milo', text: "I'm not ready to forgive you yet." },
+          { who: null, text: 'Jai nods slowly and walks away.' },
+          { who: null, text: 'At lunch, you sit apart. Jai keeps looking over at you.' },
+        ],
         am: 'gentle', al: "Not forgiving yet isn't wrong. But notice what it costs...",
         A2: {
           text: 'Wave Jai over to sit with you', s: 1,
@@ -160,12 +221,23 @@ export const EPISODE_1 = [
     bg: 'linear-gradient(135deg,#EF9F27,#BA7517)',
     image: 'bg-scenario-4.png', char: 'sam',
     sit: "During a maths test, Milo notices best friend Sam is copying from a hidden sheet. Sam catches Milo's eye and mouths: \"Please don't say anything.\" The teacher hasn't noticed.",
+    intro: [
+      { who: null, text: 'Maths test. The classroom is silent except for the scratching of pencils.' },
+      { who: null, text: 'Milo looks up for a moment, and notices something. Sam is copying answers from a hidden sheet.' },
+      { who: 'sam', text: "Please... don't say anything." },
+      { who: null, text: "Sam mouths the words silently. The teacher hasn't noticed a thing." },
+    ],
     am: 'watchful', al: "This one doesn't have an easy answer...", ambig: true,
     ambigNote: 'Both choices here have real costs. There is no perfect answer. Think carefully.',
     A: {
       text: 'Stay quiet and protect Sam',
       L2: {
         sit: 'The test ends. Sam passes. Later Sam whispers: "Thank you. My parents would have been furious." But you feel uneasy.',
+        story: [
+          { who: null, text: 'Milo says nothing. The test ends, and Sam passes. Later, Sam finds Milo in the corridor.' },
+          { who: 'sam', text: 'Thank you for not telling. My parents would have been furious.' },
+          { who: null, text: 'But something feels uneasy inside.' },
+        ],
         am: 'curious', al: 'Loyalty is real. So is the unease...',
         A2: {
           text: "Tell Sam honestly: \"I covered for you this time, but I won't again.\"", s: 1,
@@ -181,6 +253,11 @@ export const EPISODE_1 = [
       text: 'Quietly tell the teacher after the test',
       L2: {
         sit: 'Sam is asked to retake the test alone. At break, Sam finds you. "That was you, wasn\'t it."',
+        story: [
+          { who: null, text: 'After the test, Milo quietly tells the teacher. Sam is asked to retake the test alone.' },
+          { who: 'sam', text: "That was you, wasn't it." },
+          { who: null, text: "Sam's voice is quiet, but hurt." },
+        ],
         am: 'sad', al: 'Honesty has a cost too...',
         A2: {
           text: "\"Yes. I thought it was the right thing. I'm sorry it hurt you.\"", s: 2,
@@ -199,11 +276,22 @@ export const EPISODE_1 = [
     bg: 'linear-gradient(135deg,#7F77DD,#534AB7)',
     image: 'bg-scenario-5.png', char: 'sam',
     sit: 'Milo and Sam are building a class project together. Sam keeps doing things differently from the plan. Milo is getting frustrated. This is not how they agreed.',
+    intro: [
+      { who: null, text: 'Art class. Milo and Sam are building their class project together, just like they planned.' },
+      { who: 'sam', text: 'Wait, I have a better idea! What if we do this part differently?' },
+      { who: null, text: 'Sam keeps changing things from the plan. Milo feels the frustration building.' },
+      { who: 'milo', text: 'This is not what we agreed on...' },
+    ],
     am: 'watchful', al: 'Two minds can build something better, or clash.', ambig: false,
     A: {
       text: 'Pause and ask Sam to explain their idea first',
       L2: {
         sit: 'Sam explains. The idea is actually creative, but Milo still prefers the original plan.',
+        story: [
+          { who: null, text: 'Milo takes a breath and asks Sam to explain the idea first.' },
+          { who: 'sam', text: 'Look, if we glue this side first, the tower stands twice as strong!' },
+          { who: null, text: 'The idea is actually creative. But Milo still prefers the original plan.' },
+        ],
         am: 'curious', al: 'What if both ideas have something worth keeping?',
         A2: {
           text: 'Suggest combining the best of both ideas', s: 2,
@@ -219,6 +307,12 @@ export const EPISODE_1 = [
       text: "Say: \"You're doing it wrong. Let me just do it.\"",
       L2: {
         sit: 'Sam puts down the pencil and goes quiet. The teacher comes over and asks what happened.',
+        story: [
+          { who: 'milo', text: "You're doing it wrong. Let me just do it." },
+          { who: null, text: 'Sam puts down the pencil and goes very quiet.' },
+          { who: 'teacher', text: 'Is everything alright over here?' },
+          { who: null, text: 'The teacher looks at them both, waiting.' },
+        ],
         am: 'sad', al: "Sam's contribution matters too...",
         A2: {
           text: 'Apologise and ask Sam to help again', s: 1,
@@ -237,11 +331,21 @@ export const EPISODE_1 = [
     bg: 'linear-gradient(135deg,#1D9E75,#0F6E56)',
     image: 'bg-scenario-6.png', char: 'milo',
     sit: 'Milo is playing a board game with others and keeps losing, three times now. One player laughs each time. The frustration is building and Milo wants to quit.',
+    intro: [
+      { who: null, text: 'Game night. Milo is playing a board game with friends, and he has lost three times in a row.' },
+      { who: null, text: 'One player laughs loudly every time Milo loses.' },
+      { who: 'milo', text: "I keep losing... I don't want to play anymore." },
+      { who: null, text: 'The frustration is building. Milo wants to quit.' },
+    ],
     am: 'gentle', al: 'How we lose matters as much as how we win...', ambig: false,
     A: {
       text: 'Take a deep breath and keep playing',
       L2: {
         sit: 'Milo loses again. The same player laughs again.',
+        story: [
+          { who: null, text: 'Milo takes a deep breath and plays another round. He loses again.' },
+          { who: null, text: 'And the same player laughs. Again.' },
+        ],
         am: 'proud', al: 'What Milo does now is the real win...',
         A2: {
           text: 'Say "Good game" and mean it as much as possible', s: 2,
@@ -257,6 +361,10 @@ export const EPISODE_1 = [
       text: 'Push the game pieces away in frustration',
       L2: {
         sit: 'The pieces scatter. Everyone looks at Milo. There is an awkward silence.',
+        story: [
+          { who: null, text: 'Milo shoves the board. The pieces scatter across the table.' },
+          { who: null, text: 'Everyone goes quiet and looks at Milo. The silence feels heavy.' },
+        ],
         am: 'gentle', al: 'These feelings are real. What now?',
         A2: {
           text: 'Take a breath, say sorry, and help collect the pieces', s: 1,
