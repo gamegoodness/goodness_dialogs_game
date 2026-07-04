@@ -1,19 +1,22 @@
 /**
  * scenarios.js — THE CONTENT (source of truth).
  *
- * This is a faithful port of the SCENARIOS array from the original
- * goodness_episode1_v3.html prototype. All scenario text, choices, outcomes,
- * scores (`s`) and virtues (`virt`) are preserved EXACTLY as written.
- * The only changes vs. the raw prototype are cosmetic Unicode repairs
- * (mojibake `â` → em dash `—`, corrupted emoji bytes → proper emoji).
+ * A faithful port of the SCENARIOS array from the original prototype. All
+ * scenario text, choices, outcomes, scores (`s`) and virtues (`virt`) are
+ * preserved. Two content-level additions were made for the dialog/visual-novel
+ * presentation:
+ *   - `char`: which character portrait stands on stage for this moment
+ *             (key into ASSETS.characters). This is the person the moment is
+ *             about, and their name appears on the dialog nameplate.
+ *   - All em dashes / en dashes in player-facing text were removed and rewritten
+ *     with plain punctuation.
  *
  * ── How to add a new episode ────────────────────────────────────────────────
- * Each episode is one array of "moments". Copy this file to
- * episode2.js, edit the moments, and register it in src/data/episodes.js.
- * The shape of a moment:
+ * Each episode is one array of "moments". Copy this file, edit the moments, and
+ * register it in src/data/episodes.js. The shape of a moment:
  *
  *   {
- *     id, title, tag, tc (theme colour), bg (css gradient),
+ *     id, title, tag, tc (theme colour), bg (css gradient), image, char,
  *     sit  : opening narration,
  *     am   : angel mood key (see ANGEL_FACES),
  *     al   : angel line,
@@ -32,12 +35,17 @@ export const ANGEL_FACES = {
   waiting: '⏳', neutral: '😌',
 };
 
+/** Display names for the dialog nameplate, keyed by ASSETS.characters key. */
+export const CHARACTER_NAMES = {
+  milo: 'Milo', priya: 'Priya', jai: 'Jai', sam: 'Sam',
+};
+
 export const EPISODE_1 = [
   {
     id: 1, title: 'The lunchbox', tag: 'Kindness & Sharing', tc: '#1D9E75',
     bg: 'linear-gradient(135deg,#1D9E75,#0F6E56)',
-    image: 'bg-scenario-1.png',
-    sit: "Milo is eating lunch in the school canteen. A classmate, Priya, quietly opens her bag and looks down — there's nothing inside. She says nothing and stares at the table.",
+    image: 'bg-scenario-1.png', char: 'priya',
+    sit: "Milo is eating lunch in the school canteen. A classmate, Priya, quietly opens her bag and looks down. There is nothing inside. She says nothing and stares at the table.",
     am: 'worried', al: 'I wonder what Milo will notice...', ambig: false,
     A: {
       text: 'Quietly offer half your sandwich to Priya',
@@ -45,7 +53,7 @@ export const EPISODE_1 = [
         sit: "Priya looks surprised. \"Thank you... but I don't want to take your food.\" She shakes her head shyly.",
         am: 'hopeful', al: 'What Milo says next matters...',
         A2: {
-          text: "\"It's okay — I have enough. Please take it.\"", s: 2,
+          text: "\"It's okay, I have enough. Please take it.\"", s: 2,
           oc: { icon: '🤝', title: 'A friendship begins', col: '#1D9E75', bg: '#E1F5EE', txt: 'Priya lights up. You eat together the rest of the week. One small act of kindness created something lasting.', virt: 'Kindness' },
         },
         B2: {
@@ -69,13 +77,13 @@ export const EPISODE_1 = [
         },
       },
     },
-    reflect: 'Has something like this ever happened to you — when you noticed someone needed help? What did you do?',
+    reflect: 'Has something like this ever happened to you, when you noticed someone needed help? What did you do?',
   },
   {
     id: 2, title: 'The broken vase', tag: 'Honesty & Courage', tc: '#185FA5',
     bg: 'linear-gradient(135deg,#378ADD,#185FA5)',
-    image: 'bg-scenario-2.png',
-    sit: 'Milo is playing inside when — crack — a vase falls from a shelf and shatters. It was an accident. Mum comes in and looks at the pieces on the floor.',
+    image: 'bg-scenario-2.png', char: 'milo',
+    sit: 'Milo is playing inside when, crack, a vase falls from a shelf and shatters. It was an accident. Mum comes in and looks at the pieces on the floor.',
     am: 'nervous', al: 'The truth, or a story?', ambig: false,
     A: {
       text: "Tell the truth: \"Mum, I knocked it over. It was an accident.\"",
@@ -87,45 +95,45 @@ export const EPISODE_1 = [
           oc: { icon: '🤗', title: 'Trust holds', col: '#185FA5', bg: '#E6F1FB', txt: 'Mum pulls you into a hug. "Thank you for telling me the truth. That matters more than the vase."', virt: 'Honesty' },
         },
         B2: {
-          text: "\"It was an accident — why are you upset?\"", s: 0,
+          text: "\"It was an accident, why are you upset?\"", s: 0,
           oc: { icon: '😐', title: 'Honest but defensive', col: '#5F5E5A', bg: '#F1EFE8', txt: 'Mum goes quiet. Being honest includes hearing how others feel too.', virt: 'Reflection' },
         },
       },
     },
     B: {
-      text: 'Stay quiet — or quietly blame the cat',
+      text: 'Stay quiet, or quietly blame the cat',
       L2: {
         sit: 'Dad comes in. Seeing the pieces, he scolds the cat. The cat looks confused. You know the truth.',
         am: 'sad', al: "The cat can't speak for itself...",
         A2: {
           text: 'Take a breath and tell Dad the truth now', s: 1,
-          oc: { icon: '🐱', title: 'Late honesty still counts', col: '#185FA5', bg: '#E6F1FB', txt: '"Actually — it was me." It\'s harder to say the second time. But the cat comes back inside.', virt: 'Courage' },
+          oc: { icon: '🐱', title: 'Late honesty still counts', col: '#185FA5', bg: '#E6F1FB', txt: '"Actually, it was me." It\'s harder to say the second time. But the cat comes back inside.', virt: 'Courage' },
         },
         B2: {
           text: 'Stay quiet. Maybe nobody will find out.', s: -2,
-          oc: { icon: '😔', title: 'The weight of a small lie', col: '#993C1D', bg: '#FAECE7', txt: "The cat is locked outside. You go to bed with a knot in your stomach. The lie didn't disappear — it moved inside you.", virt: 'Reflection on Dishonesty' },
+          oc: { icon: '😔', title: 'The weight of a small lie', col: '#993C1D', bg: '#FAECE7', txt: "The cat is locked outside. You go to bed with a knot in your stomach. The lie didn't disappear. It moved inside you.", virt: 'Reflection on Dishonesty' },
         },
       },
     },
-    reflect: 'Have you ever had to tell someone something hard to say? What helped you be honest — or what made it difficult?',
+    reflect: 'Have you ever had to tell someone something hard to say? What helped you be honest, or what made it difficult?',
   },
   {
     id: 3, title: 'The torn friendship', tag: 'Forgiveness', tc: '#D4537E',
     bg: 'linear-gradient(135deg,#D4537E,#993556)',
-    image: 'bg-scenario-3.png',
+    image: 'bg-scenario-3.png', char: 'jai',
     sit: "Milo's best friend Jai said something really unkind in front of the whole class yesterday. It hurt. Today Jai comes up quietly and says: \"I'm really sorry. I didn't mean it.\"",
     am: 'gentle', al: 'Forgiveness is one of the hardest things...', ambig: false,
     A: {
-      text: "\"Okay. I forgive you.\" — even though it still stings",
+      text: "\"Okay. I forgive you.\" Even though it still stings",
       L2: {
         sit: 'Jai looks relieved. But later, Jai says something thoughtless about another classmate.',
         am: 'curious', al: "Forgiveness doesn't mean pretending everything is perfect...",
         A2: {
           text: "Gently tell Jai: \"That kind of thing is what hurt me too.\"", s: 2,
-          oc: { icon: '💛', title: 'Forgiveness with honesty', col: '#D4537E', bg: '#FBEAF0', txt: 'Jai nods. "You\'re right. I\'ll try to be more careful." Real forgiveness includes honesty — not just letting things go.', virt: 'Forgiveness' },
+          oc: { icon: '💛', title: 'Forgiveness with honesty', col: '#D4537E', bg: '#FBEAF0', txt: 'Jai nods. "You\'re right. I\'ll try to be more careful." Real forgiveness includes honesty, not just letting things go.', virt: 'Forgiveness' },
         },
         B2: {
-          text: 'Stay quiet — you already forgave once today', s: 1,
+          text: 'Stay quiet, you already forgave once today', s: 1,
           oc: { icon: '🕊️', title: 'A quiet forgiveness', col: '#D4537E', bg: '#FBEAF0', txt: 'You let it go. The friendship mends slowly. Sometimes the most generous thing is not to count every mistake.', virt: 'Forgiveness' },
         },
       },
@@ -141,7 +149,7 @@ export const EPISODE_1 = [
         },
         B2: {
           text: 'Look away', s: 0,
-          oc: { icon: '🫤', title: 'Still apart', col: '#5F5E5A', bg: '#F1EFE8', txt: "You each eat alone. You needed space — that's real. Forgiveness is something we choose at our own pace.", virt: 'Reflection' },
+          oc: { icon: '🫤', title: 'Still apart', col: '#5F5E5A', bg: '#F1EFE8', txt: "You each eat alone. You needed space, that's real. Forgiveness is something we choose at our own pace.", virt: 'Reflection' },
         },
       },
     },
@@ -150,10 +158,10 @@ export const EPISODE_1 = [
   {
     id: 4, title: 'The test', tag: 'Honesty vs Loyalty', tc: '#BA7517',
     bg: 'linear-gradient(135deg,#EF9F27,#BA7517)',
-    image: 'bg-scenario-4.png',
+    image: 'bg-scenario-4.png', char: 'sam',
     sit: "During a maths test, Milo notices best friend Sam is copying from a hidden sheet. Sam catches Milo's eye and mouths: \"Please don't say anything.\" The teacher hasn't noticed.",
     am: 'watchful', al: "This one doesn't have an easy answer...", ambig: true,
-    ambigNote: 'Both choices here have real costs. There is no perfect answer — think carefully.',
+    ambigNote: 'Both choices here have real costs. There is no perfect answer. Think carefully.',
     A: {
       text: 'Stay quiet and protect Sam',
       L2: {
@@ -161,7 +169,7 @@ export const EPISODE_1 = [
         am: 'curious', al: 'Loyalty is real. So is the unease...',
         A2: {
           text: "Tell Sam honestly: \"I covered for you this time, but I won't again.\"", s: 1,
-          oc: { icon: '🤝', title: 'Loyalty with a limit', col: '#BA7517', bg: '#FAEEDA', txt: 'Sam goes quiet, then nods. You protected your friend — but you also told the truth about your limit. That took courage too.', virt: 'Loyalty & Honesty' },
+          oc: { icon: '🤝', title: 'Loyalty with a limit', col: '#BA7517', bg: '#FAEEDA', txt: 'Sam goes quiet, then nods. You protected your friend, but you also told the truth about your limit. That took courage too.', virt: 'Loyalty & Honesty' },
         },
         B2: {
           text: 'Say nothing more. Let it pass.', s: 0,
@@ -184,18 +192,18 @@ export const EPISODE_1 = [
         },
       },
     },
-    reflect: 'When two good values — like loyalty and honesty — pull in different directions, how do you decide which one to follow?',
+    reflect: 'When two good values, like loyalty and honesty, pull in different directions, how do you decide which one to follow?',
   },
   {
     id: 5, title: 'The team project', tag: 'Respect & Collaboration', tc: '#534AB7',
     bg: 'linear-gradient(135deg,#7F77DD,#534AB7)',
-    image: 'bg-scenario-5.png',
-    sit: 'Milo and Sam are building a class project together. Sam keeps doing things differently from the plan. Milo is getting frustrated — this isn\'t how they agreed.',
-    am: 'watchful', al: 'Two minds can build something better — or clash.', ambig: false,
+    image: 'bg-scenario-5.png', char: 'sam',
+    sit: 'Milo and Sam are building a class project together. Sam keeps doing things differently from the plan. Milo is getting frustrated. This is not how they agreed.',
+    am: 'watchful', al: 'Two minds can build something better, or clash.', ambig: false,
     A: {
       text: 'Pause and ask Sam to explain their idea first',
       L2: {
-        sit: 'Sam explains. The idea is actually creative — but Milo still prefers the original plan.',
+        sit: 'Sam explains. The idea is actually creative, but Milo still prefers the original plan.',
         am: 'curious', al: 'What if both ideas have something worth keeping?',
         A2: {
           text: 'Suggest combining the best of both ideas', s: 2,
@@ -222,13 +230,13 @@ export const EPISODE_1 = [
         },
       },
     },
-    reflect: 'Have you ever worked with someone who did things differently? What helped — or what made it harder?',
+    reflect: 'Have you ever worked with someone who did things differently? What helped, or what made it harder?',
   },
   {
     id: 6, title: 'The hard game', tag: 'Perseverance & Attitude', tc: '#0F6E56',
     bg: 'linear-gradient(135deg,#1D9E75,#0F6E56)',
-    image: 'bg-scenario-6.png',
-    sit: 'Milo is playing a board game with others and keeps losing — three times now. One player laughs each time. The frustration is building and Milo wants to quit.',
+    image: 'bg-scenario-6.png', char: 'milo',
+    sit: 'Milo is playing a board game with others and keeps losing, three times now. One player laughs each time. The frustration is building and Milo wants to quit.',
     am: 'gentle', al: 'How we lose matters as much as how we win...', ambig: false,
     A: {
       text: 'Take a deep breath and keep playing',
@@ -236,7 +244,7 @@ export const EPISODE_1 = [
         sit: 'Milo loses again. The same player laughs again.',
         am: 'proud', al: 'What Milo does now is the real win...',
         A2: {
-          text: 'Say "Good game" — and mean it as much as possible', s: 2,
+          text: 'Say "Good game" and mean it as much as possible', s: 2,
           oc: { icon: '🏆', title: 'The real win', col: '#0F6E56', bg: '#E1F5EE', txt: 'The room goes quiet. Even the laughing player stops. Perseverance has a quiet kind of power.', virt: 'Perseverance' },
         },
         B2: {
@@ -248,7 +256,7 @@ export const EPISODE_1 = [
     B: {
       text: 'Push the game pieces away in frustration',
       L2: {
-        sit: 'The pieces scatter. Everyone looks at Milo. There\'s an awkward silence.',
+        sit: 'The pieces scatter. Everyone looks at Milo. There is an awkward silence.',
         am: 'gentle', al: 'These feelings are real. What now?',
         A2: {
           text: 'Take a breath, say sorry, and help collect the pieces', s: 1,
@@ -256,7 +264,7 @@ export const EPISODE_1 = [
         },
         B2: {
           text: 'Storm out of the room', s: -1,
-          oc: { icon: '😞', title: 'Anger in charge', col: '#993C1D', bg: '#FAECE7', txt: 'Milo sits alone, still upset. Anger can close doors we didn\'t mean to close.', virt: 'Reflection on Giving Up' },
+          oc: { icon: '😞', title: 'Anger in charge', col: '#993C1D', bg: '#FAECE7', txt: 'Milo sits alone, still upset. Anger can close doors we did not mean to close.', virt: 'Reflection on Giving Up' },
         },
       },
     },

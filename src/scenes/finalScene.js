@@ -17,8 +17,8 @@ import { guard } from '../engine/transitions.js';
 import { G, uniqueVirtues } from '../engine/state.js';
 
 function tier(score) {
-  if (score >= 8) return { title: 'Goodness Champion', rc: '#1D9E75', rb: '#E1F5EE', txt: "Milo showed deep empathy today — through kindness, honesty, forgiveness, courage and perseverance. These aren't small things." };
-  if (score >= 4) return { title: 'Growing in Goodness', rc: '#185FA5', rb: '#E6F1FB', txt: "Milo made some strong choices and had a few difficult moments. That's how empathy grows — through noticing how our choices shape the world around us." };
+  if (score >= 8) return { title: 'Goodness Champion', rc: '#1D9E75', rb: '#E1F5EE', txt: "Milo showed deep empathy today, through kindness, honesty, forgiveness, courage and perseverance. These aren't small things." };
+  if (score >= 4) return { title: 'Growing in Goodness', rc: '#185FA5', rb: '#E6F1FB', txt: "Milo made some strong choices and had a few difficult moments. That's how empathy grows, through noticing how our choices shape the world around us." };
   return { title: 'Every choice is a chance', rc: '#BA7517', rb: '#FAEEDA', txt: "Some of today's moments were hard. That's real. The Good Angel is still proud of Milo for trying." };
 }
 
@@ -44,7 +44,7 @@ export function createFinalScene(app) {
 
   const replayBtn = el('button.rbtn', {
     type: 'button', style: { background: t.rc, color: 'white' },
-  }, ['Play again — try every path']);
+  }, ['Play again, try every path']);
   replayBtn.addEventListener('click', () => {
     guard.run(async () => { sfx.advance(); await app.toTitle(); });
   });
@@ -57,9 +57,11 @@ export function createFinalScene(app) {
     el('div.fnote', {}, [ep.curriculum]),
   ].filter(Boolean));
 
-  const scene = el('div.scene.layer', {}, [
-    el('div.topbar', {}, [el('div.ep', {}, [`Episode ${ep.id} complete`])]),
-    fcard,
+  const scene = el('div.scene.final-screen', {}, [
+    el('div.final-inner', {}, [
+      el('div.final-head', {}, [el('div.ep', {}, [`Episode ${ep.id} complete`])]),
+      fcard,
+    ]),
   ]);
 
   let tw;

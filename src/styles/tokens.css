@@ -1,5 +1,5 @@
 /* tokens.css — design tokens (colours, radii, shadows, motion easing).
- * Animation *durations* live in JS (config.js → --scene-out etc.); this file
+ * Animation *durations* live in JS (config.js -> --scene-out etc.); this file
  * holds the visual constants and easing curves. */
 :root {
   /* surfaces */
@@ -7,21 +7,32 @@
   --glass-bg: rgba(255, 255, 255, 0.15);
   --glass-border: rgba(255, 255, 255, 0.25);
 
+  /* game-UI panels (visual-novel dialog box + HUD) */
+  --panel-bg: linear-gradient(180deg, rgba(20, 32, 28, 0.82), rgba(9, 18, 15, 0.92));
+  --panel-border: rgba(255, 255, 255, 0.16);
+  --panel-glow: rgba(255, 255, 255, 0.06);
+  --hud-bg: rgba(10, 20, 16, 0.55);
+  --accent: #7CE0BC;
+
   /* text */
   --ink: #111;
   --ink-soft: #444;
   --ink-faint: rgba(255, 255, 255, 0.7);
+  --paper: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.72);
 
   /* radii */
   --r-sm: 7px;
   --r-md: 11px;
   --r-lg: 16px;
+  --r-xl: 22px;
   --r-pill: 20px;
 
   /* shadow */
   --shadow-1: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.2);
   --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.18);
+  --shadow-panel: 0 -8px 40px rgba(0, 0, 0, 0.45);
 
   /* motion easing (durations come from JS via config.js) */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

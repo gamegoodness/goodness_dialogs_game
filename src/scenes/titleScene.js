@@ -16,7 +16,7 @@ export function createTitleScene(app) {
   const ep = ACTIVE_EPISODE;
 
   const logo = el('img.title-logo', { src: ASSETS.logo, alt: '', draggable: false });
-  const epLabel = el('div.tgame', {}, [`Goodness Curriculum — Episode ${ep.id}`]);
+  const epLabel = el('div.tgame', {}, [`Goodness Curriculum · Episode ${ep.id}`]);
   const epName = el('div.tepi');
   const sub = el('div.tsub', { html: ep.subtitle });
   const startBtn = el('button.sbtn', { type: 'button' }, [`Start Milo's day →`]);
@@ -30,10 +30,12 @@ export function createTitleScene(app) {
   });
 
   const scene = el('div.scene.title-screen', {}, [
-    el('div.title-logo-wrap', {}, [logo]),
-    epLabel, epName, sub,
-    el('div.title-cta', {}, [startBtn]),
-    note,
+    el('div.title-inner', {}, [
+      el('div.title-logo-wrap', {}, [logo]),
+      epLabel, epName, sub,
+      el('div.title-cta', {}, [startBtn]),
+      note,
+    ]),
   ]);
 
   let tw;

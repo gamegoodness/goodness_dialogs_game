@@ -43,6 +43,11 @@ export function bgImage(fileName) {
   return fileName ? IMG + fileName : null;
 }
 
+/** Resolve a character portrait path by its key (see ASSETS.characters). */
+export function charImage(key) {
+  return ASSETS.characters[key] || null;
+}
+
 export const TIMING = {
   // Typewriter
   typeCharMs: 22,        // ms per character for narration/dialogue
