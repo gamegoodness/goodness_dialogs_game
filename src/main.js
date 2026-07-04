@@ -1,5 +1,5 @@
 /**
- * main.js — bootstrap + top-level scene router.
+ * main.js - bootstrap + top-level scene router.
  *
  * Owns the three top-level screen swaps (title → game → final → title) and the
  * shared background. In-moment interaction is handled inside gameScene; main
@@ -63,7 +63,7 @@ function boot() {
     async toTitle() { replayGame(); await mount(createTitleScene(app), 'back'); },
   };
 
-  // First paint — set the title background instantly (no crossfade from blank).
+  // First paint - set the title background instantly (no crossfade from blank).
   const title = createTitleScene(app);
   background.set(title.bg);
   current = title;

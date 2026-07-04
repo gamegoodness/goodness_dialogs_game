@@ -1,5 +1,5 @@
 /**
- * audio.js — optional, tiny WebAudio sound layer (no asset files required).
+ * audio.js - optional, tiny WebAudio sound layer (no asset files required).
  *
  * Real sound files are optional (see /assets/sounds/README). To keep the game
  * fully demoable with zero binary audio assets, this module synthesises soft

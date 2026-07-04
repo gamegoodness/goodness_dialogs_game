@@ -1,5 +1,5 @@
 /**
- * analytics.js — best-effort student + interaction logging to Supabase.
+ * analytics.js - best-effort student + interaction logging to Supabase.
  *
  * Two tables (created by supabase/schema.sql):
  *   students     one row per child who fills the form (id generated here,

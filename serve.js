@@ -1,5 +1,5 @@
 /*
- * serve.js — a tiny, zero-dependency static file server.
+ * serve.js - a tiny, zero-dependency static file server.
  *
  * ES modules must be served over http:// (not opened as file://), so this
  * provides a no-install way to run the game locally:
@@ -8,7 +8,7 @@
  *     node serve.js 8080  →  http://localhost:8080
  *
  * For production you can host the folder on any static host (GitHub Pages,
- * Netlify, S3, …) — there is no build step.
+ * Netlify, S3, …) - there is no build step.
  */
 
 const http = require('http');

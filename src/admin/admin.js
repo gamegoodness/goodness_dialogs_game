@@ -1,5 +1,5 @@
 /**
- * admin.js — the admin panel (admin.html).
+ * admin.js - the admin panel (admin.html).
  *
  * Signs in with the admin's Supabase Auth email + password, then reads the
  * `students` and `game_events` tables and renders: overview stats, a student
@@ -77,7 +77,7 @@ function renderStats() {
   const written = events.filter((e) => e.event_type === 'reflection' || e.event_type === 'thought');
   const avg = completes.length
     ? (completes.reduce((s, e) => s + Number(e.data.score || 0), 0) / completes.length).toFixed(1)
-    : '—';
+    : '-';
   const card = (num, lbl) =>
     `<div class="card"><div class="num">${num}</div><div class="lbl">${lbl}</div></div>`;
   $('stats').innerHTML =
@@ -90,17 +90,17 @@ function renderStats() {
 
 function renderStudents() {
   if (!students.length) {
-    $('students').innerHTML = '<div class="quiet">No students yet — they appear as soon as someone fills the form.</div>';
+    $('students').innerHTML = '<div class="quiet">No students yet - they appear as soon as someone fills the form.</div>';
     return;
   }
   const rows = students.map((s) => {
     const evs = byStudent.get(s.id) || [];
     const plays = new Set(evs.map((e) => e.session_id)).size;
     const done = evs.filter((e) => e.event_type === 'episode_complete');
-    const last = done.length ? scorePill(done[done.length - 1].data.score) : '<span class="muted">—</span>';
+    const last = done.length ? scorePill(done[done.length - 1].data.score) : '<span class="muted">-</span>';
     return `<tr class="click" data-id="${esc(s.id)}">
-      <td>${esc(s.name)}</td><td>${esc(s.age ?? '—')}</td>
-      <td>${esc(s.city || '—')}</td><td>${esc(s.country || '—')}</td>
+      <td>${esc(s.name)}</td><td>${esc(s.age ?? '-')}</td>
+      <td>${esc(s.city || '-')}</td><td>${esc(s.country || '-')}</td>
       <td>${plays}</td><td>${last}</td>
       <td class="muted">${new Date(s.created_at).toLocaleDateString()}</td>
     </tr>`;
@@ -119,13 +119,13 @@ function describe(e) {
   const m = d.moment != null ? `Moment ${esc(d.moment)}` : '';
   switch (e.event_type) {
     case 'game_start': return '▶️ Started playing';
-    case 'thought': return `💭 ${m} — thought before choosing: “${esc(d.text)}”`;
-    case 'choice_1': return `🅰️ ${m} “${esc(d.title)}” — first choice <b>${esc(d.choice)}</b>: ${esc(d.text)}`;
-    case 'choice_2': return `🅱️ ${m} — second choice <b>${esc(d.choice)}</b>: ${esc(d.text)} → ${scorePill(d.score)} ${esc(d.virtue || '')}`;
-    case 'story_skipped': return `⏭️ ${m} — skipped the story`;
-    case 'try_differently': return `↩️ ${m} — pressed “Try differently”`;
-    case 'reflection': return `💬 ${m} — wrote: “${esc(d.text)}”`;
-    case 'reflection_skipped': return `🤔 ${m} — skipped the reflection`;
+    case 'thought': return `💭 ${m} - thought before choosing: “${esc(d.text)}”`;
+    case 'choice_1': return `🅰️ ${m} “${esc(d.title)}” - first choice <b>${esc(d.choice)}</b>: ${esc(d.text)}`;
+    case 'choice_2': return `🅱️ ${m} - second choice <b>${esc(d.choice)}</b>: ${esc(d.text)} → ${scorePill(d.score)} ${esc(d.virtue || '')}`;
+    case 'story_skipped': return `⏭️ ${m} - skipped the story`;
+    case 'try_differently': return `↩️ ${m} - pressed “Try differently”`;
+    case 'reflection': return `💬 ${m} - wrote: “${esc(d.text)}”`;
+    case 'reflection_skipped': return `🤔 ${m} - skipped the reflection`;
     case 'episode_complete': return `🏁 Finished with ${scorePill(d.score)} · ${esc((d.virtues || []).join(', '))}`;
     default: return esc(e.event_type);
   }
@@ -183,7 +183,7 @@ function renderChoices() {
     return;
   }
   const rows = [...perMoment.entries()].sort((a, b) => a[0] - b[0]).map(([id, r]) => {
-    const avg = r.scores.length ? (r.scores.reduce((s, v) => s + v, 0) / r.scores.length).toFixed(1) : '—';
+    const avg = r.scores.length ? (r.scores.reduce((s, v) => s + v, 0) / r.scores.length).toFixed(1) : '-';
     return `<tr><td>${esc(id)}</td><td>${esc(r.title)}</td>
       <td>${r.c1.A} / ${r.c1.B}</td><td>${r.c2.A} / ${r.c2.B}</td>
       <td>${avg}</td><td>${r.retries}</td></tr>`;
@@ -207,7 +207,7 @@ function renderReflections() {
     const kind = e.event_type === 'thought'
       ? '<span class="pill">Thought</span>'
       : '<span class="pill" style="background:rgba(255,205,90,.15);color:#FFE39A">Reflection</span>';
-    return `<tr><td>${esc(s ? s.name : '—')}</td><td>${kind}</td><td>${esc(e.data.moment)}</td>
+    return `<tr><td>${esc(s ? s.name : '-')}</td><td>${kind}</td><td>${esc(e.data.moment)}</td>
       <td>${esc(e.data.text)}</td>
       <td class="muted">${new Date(e.created_at).toLocaleString()}</td></tr>`;
   }).join('');
@@ -312,7 +312,7 @@ async function showDashboard() {
   try {
     await loadDashboard();
   } catch (e) {
-    showLogin(e.message === 'expired' ? 'Session expired — please sign in again.' : e.message);
+    showLogin(e.message === 'expired' ? 'Session expired - please sign in again.' : e.message);
   }
 }
 
@@ -339,5 +339,5 @@ $('download-btn').addEventListener('click', () => {
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   showLogin('Supabase keys are missing in src/data/supabase.js');
 } else if (token) {
-  showDashboard(); // token from this browser session — try it, fall back to login
+  showDashboard(); // token from this browser session - try it, fall back to login
 }

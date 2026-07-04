@@ -1,5 +1,5 @@
 /*
- * gen-assets.js — dependency-free PNG placeholder generator.
+ * gen-assets.js - dependency-free PNG placeholder generator.
  *
  * Generates clean gradient backgrounds + simple character/icon silhouettes
  * into /assets/images so the game is fully demoable before real art exists.
@@ -7,7 +7,7 @@
  * Run:  node scripts/gen-assets.js
  *
  * These are PLACEHOLDERS. To use real art, just drop a PNG with the same
- * filename into /assets/images — no code changes needed (see README).
+ * filename into /assets/images - no code changes needed (see README).
  */
 
 const fs = require('fs');
@@ -153,7 +153,7 @@ function save(name, cv) {
 // ---------------------------------------------------------------------------
 console.log('Generating placeholder art →', OUT);
 
-// Backgrounds — colors mirror each scenario's CSS gradient
+// Backgrounds - colors mirror each scenario's CSS gradient
 const BGS = {
   'bg-title.png':      ['#2D4A3E', '#1A2E26'],
   'bg-final.png':      ['#2D4A3E', '#1A2E26'],
@@ -196,12 +196,12 @@ function character(bodyColor, headColor, opts = {}) {
   return cv;
 }
 
-// Angel — cream body, gold halo
+// Angel - cream body, gold halo
 (() => {
   const cv = new Canvas(400, 400);
   circle(cv, 200, 350, 90, '#000000', 25);
   // halo (drawn as ring: outer gold, inner transparent by drawing outer then bg-colored inner is tricky
-  // on transparent — instead draw a thin ring by two circles with the inner matching nothing)
+  // on transparent - instead draw a thin ring by two circles with the inner matching nothing)
   for (let a = 0; a < 360; a += 2) {
     const rad = 46;
     const x = 200 + Math.cos(a * Math.PI / 180) * rad;
@@ -239,7 +239,7 @@ save('sam.png',   character('#BA7517', '#EAC29B'));
   save('logo.png', cv);
 })();
 
-// Simple icon tiles (rounded square + drawn glyph) — decorative placeholders
+// Simple icon tiles (rounded square + drawn glyph) - decorative placeholders
 function iconTile(color) {
   const cv = new Canvas(128, 128);
   roundRect(cv, 8, 8, 112, 112, 30, color, 255);

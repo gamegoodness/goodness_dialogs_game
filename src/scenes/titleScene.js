@@ -1,5 +1,5 @@
 /**
- * titleScene.js — the opening screen.
+ * titleScene.js - the opening screen.
  *
  * The angel logo drifts in, the title types on, and the Start button pulses
  * gently to invite the first tap.

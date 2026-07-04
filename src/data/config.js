@@ -1,10 +1,10 @@
 /**
- * config.js — asset paths + animation tuning.
+ * config.js - asset paths + animation tuning.
  *
  * ── Swap placeholder art ──────────────────────────────────────────────
  * Every image the game loads is listed under ASSETS. Drop a real PNG with
  * the same filename into /assets/images and it appears automatically. To
- * point at a different filename, edit the path here — nothing else changes.
+ * point at a different filename, edit the path here - nothing else changes.
  *
  * ── Adjust animation timing/style ─────────────────────────────────────
  * TIMING is the single source of truth for animation speed/feel. These
@@ -20,7 +20,7 @@ export const ASSETS = {
   backgrounds: {
     // Scenario backgrounds 1-6 map to moments 1-6 (see each moment's `image`
     // in scenarios.js). backgrounds/7.png is reserved for the upcoming
-    // episode — not used yet. Title/final reuse scenario art meanwhile.
+    // episode - not used yet. Title/final reuse scenario art meanwhile.
     title: IMG + 'backgrounds/1.png',
     final: IMG + 'backgrounds/6.png',
   },

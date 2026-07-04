@@ -1,5 +1,5 @@
 /**
- * state.js — the game state machine.
+ * state.js - the game state machine.
  *
  * A faithful port of the original prototype's `G` object and its transition
  * functions (startGame / pick / pick2 / skipReflect / replayThis / goNext /
@@ -18,8 +18,8 @@ export const G = {
   screen: 'title',   // 'title' | 'game' | 'final'
   idx: 0,            // moment index
   phase: 'c1',       // 'c1' (first choice) | 'c2' (second choice) | 'outcome'
-  path: null,        // 'A' | 'B'  — first choice
-  path2: null,       // 'A2' | 'B2' — second choice
+  path: null,        // 'A' | 'B'  - first choice
+  path2: null,       // 'A2' | 'B2' - second choice
   score: 0,
   virtues: [],
   am: 'neutral',     // angel mood key
@@ -89,7 +89,7 @@ export function pick2(p2) {
 
 export function skipReflect() { G.reflectDone = true; }
 
-/** "Try differently" — rewind the current moment, undoing its score/virtue. */
+/** "Try differently" - rewind the current moment, undoing its score/virtue. */
 export function replayThis() {
   const choice = outcome();
   G.score -= choice.s;

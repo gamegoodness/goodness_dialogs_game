@@ -1,4 +1,4 @@
-/* main.css — full-screen visual-novel layout + game UI.
+/* main.css - full-screen visual-novel layout + game UI.
  *
  * The game is a full-screen "stage": a scenario background fills the viewport,
  * a character portrait stands on stage, the Good Angel floats as a guide, and a
@@ -104,7 +104,7 @@
   min-height: 0;
 }
 
-/* Good Angel — a floating guide bubble, top area of the stage. */
+/* Good Angel - a floating guide bubble, top area of the stage. */
 .angel {
   position: absolute; top: 6px; left: 18px; right: 18px;
   display: flex; align-items: center; gap: 12px;
@@ -125,7 +125,7 @@
   line-height: 1.5; min-height: 1.5em;
 }
 
-/* Focus dim — covers the stage, the HUD band above it and the backdrop art.
+/* Focus dim - covers the stage, the HUD band above it and the backdrop art.
    When a character talks (.vn.focused) everything behind it blurs + darkens,
    leaving only the talking portrait and the dialog box in focus.
    (Blur/darkness are transitioned directly; transitioning `opacity` on a
@@ -144,7 +144,7 @@
   -webkit-backdrop-filter: blur(7px);
 }
 
-/* Story illustration — big, CENTER STAGE, rising from behind the dialog box.
+/* Story illustration - big, CENTER STAGE, rising from behind the dialog box.
    The container spans the full stage width and flex-centers the art, so the
    character always stands in the middle of the screen. */
 .portrait {
@@ -171,7 +171,7 @@
   .portrait.portrait-empty { opacity: 0; }
 }
 
-/* ── Speech bubble — character lines come FROM the character ─────────────
+/* ── Speech bubble - character lines come FROM the character ─────────────
    The character stands centre stage, so the bubble hangs directly above
    them with a tail pointing DOWN at their head, comic-book style. */
 .speech {
@@ -263,7 +263,7 @@
 .nameplate { transition: transform .3s var(--ease-out), box-shadow .3s; }
 .vn.focused .nameplate { transform: scale(1.07); box-shadow: 0 0 22px var(--tc, var(--accent)), 0 4px 14px rgba(0,0,0,0.4); }
 
-/* OK button — advances to the next dialog beat during the story. */
+/* OK button - advances to the next dialog beat during the story. */
 .ok-btn {
   position: absolute; right: 14px; bottom: 12px; z-index: 2;
   display: none; align-items: center; gap: 8px;
@@ -277,7 +277,7 @@
 .ok-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5); }
 .ok-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5); }
 
-/* Skip button — jumps past the story straight to the choices. Lives on the
+/* Skip button - jumps past the story straight to the choices. Lives on the
    stage (top-right), above the focus dim so it stays usable mid-story. */
 .skip-btn {
   position: absolute; top: 10px; right: 14px; z-index: 8;

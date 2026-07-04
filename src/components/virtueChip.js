@@ -1,5 +1,5 @@
 /**
- * virtueChip.js — a virtue badge that pops in on the final screen.
+ * virtueChip.js - a virtue badge that pops in on the final screen.
  *
  * revealVirtues() appends chips one at a time with a bouncy pop, staggered by
  * TIMING.virtueStaggerMs, instead of showing them all at once.

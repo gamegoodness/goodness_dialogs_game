@@ -1,9 +1,9 @@
 /**
- * background.js — animated background with two crossfading layers.
+ * background.js - animated background with two crossfading layers.
  *
  * Each layer carries BOTH a CSS gradient (fast, smooth) and the scenario's
  * placeholder image (drop-in swappable). Calling crossfadeTo() fades the
- * incoming layer over the current one instead of snapping — this is the
+ * incoming layer over the current one instead of snapping - this is the
  * "background transitions" feature. Includes a slow parallax drift for life.
  */
 

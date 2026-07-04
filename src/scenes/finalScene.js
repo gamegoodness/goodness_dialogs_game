@@ -1,5 +1,5 @@
 /**
- * finalScene.js — the results / reflection screen.
+ * finalScene.js - the results / reflection screen.
  *
  * The score ring counts up from zero, the earned-virtue chips pop in one at a
  * time, and the "for teachers and parents" discussion box + replay button are

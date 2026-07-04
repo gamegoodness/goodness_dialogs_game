@@ -2,7 +2,7 @@
 
 The game currently synthesises soft UI blips at runtime with the WebAudio API
 (see [`src/engine/audio.js`](../../src/engine/audio.js)), so **no audio files are
-required** — it's fully playable and demoable without anything in this folder.
+required** - it's fully playable and demoable without anything in this folder.
 
 ## To use real sound files instead
 
@@ -12,4 +12,4 @@ required** — it's fully playable and demoable without anything in this folder.
 3. In `src/engine/audio.js`, replace each `blip(...)` call with
    `new Audio(ASSETS.sounds.xxx).play()`.
 
-Keep files short (< 300 ms) and quiet — this is a calm game for children.
+Keep files short (< 300 ms) and quiet - this is a calm game for children.

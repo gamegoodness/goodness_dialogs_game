@@ -1,5 +1,5 @@
 /**
- * formScene.js — the small "about you" form shown between the title screen
+ * formScene.js - the small "about you" form shown between the title screen
  * and the game (Start → this form → play).
  *
  * Four friendly questions: name (required), age, town/city, country. Answers

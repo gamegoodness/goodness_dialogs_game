@@ -1,5 +1,5 @@
 /**
- * typewriter.js — character-by-character text reveal with click/tap to skip.
+ * typewriter.js - character-by-character text reveal with click/tap to skip.
  *
  * Usage:
  *   const tw = typewrite(el, "Some narration...", { onDone });
@@ -29,7 +29,7 @@ window.addEventListener('keydown', (e) => {
 /**
  * Type `text` into `el`. Returns a controller { skip, cancel, done }.
  * `text` may contain simple inline markup already present in the content
- * (e.g. quotes) — it is treated as plain text and inserted safely.
+ * (e.g. quotes) - it is treated as plain text and inserted safely.
  */
 export function typewrite(el, text, opts = {}) {
   const { onDone, charMs = TIMING.typeCharMs, startDelay = TIMING.typeStartDelay } = opts;
@@ -64,7 +64,7 @@ export function typewrite(el, text, opts = {}) {
     const ch = chars[i++];
     textNode.nodeValue += ch;
     // Extra pause after sentence/clause punctuation for a natural cadence.
-    const extra = '.!?—,:;'.includes(ch) ? TIMING.typePunctMs : 0;
+    const extra = '.!?-,:;'.includes(ch) ? TIMING.typePunctMs : 0;
     timer = setTimeout(step, charMs + extra);
   }
 

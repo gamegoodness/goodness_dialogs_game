@@ -1,5 +1,5 @@
 /**
- * angel.js — the Good Angel narrator.
+ * angel.js - the Good Angel narrator.
  *
  * Renders the angel image + a speech line. The angel:
  *  - floats/fades IN each time it speaks (angel-enter animation),

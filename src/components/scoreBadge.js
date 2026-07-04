@@ -1,5 +1,5 @@
 /**
- * scoreBadge.js — the goodness score pill + animated count-up.
+ * scoreBadge.js - the goodness score pill + animated count-up.
  *
  * The in-game pill bumps when the score changes. The final-screen ring uses
  * countTo() to roll the number up from 0 for a satisfying reveal.

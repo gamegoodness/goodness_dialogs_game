@@ -1,5 +1,5 @@
 /**
- * gameScene.js — the interactive heart of the game (visual-novel style).
+ * gameScene.js - the interactive heart of the game (visual-novel style).
  *
  * Every moment plays as an illustrated STORY, not a single message:
  *
@@ -71,7 +71,7 @@ export function createGameScene(app) {
   const portrait = createPortrait(null);
 
   // The speech bubble: character lines type HERE, next to the illustration,
-  // with a tail pointing at it — not in the narrator box at the bottom.
+  // with a tail pointing at it - not in the narrator box at the bottom.
   const speechName = el('div.speech-name');
   const speechText = el('div.speech-text');
   const speech = el('div.speech', {}, [speechName, speechText]);
@@ -140,7 +140,7 @@ export function createGameScene(app) {
   // beats type slowly into their speech bubble in focus mode; the OK button
   // advances between beats. Skip cancels the sequence and shows the one-line
   // summary (plus the last illustration) instead. Returns after the last beat
-  // (or after skip) — the caller then reveals the choices.
+  // (or after skip) - the caller then reveals the choices.
 
   let activeRun = null;
 

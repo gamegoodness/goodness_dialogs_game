@@ -1,5 +1,5 @@
 /**
- * dom.js — minimal element helper so components build real DOM nodes
+ * dom.js - minimal element helper so components build real DOM nodes
  * (not innerHTML strings). Keeps event wiring safe and avoids re-parsing.
  *
  *   el('button.btn', { onclick }, ['Label'])

@@ -1,5 +1,5 @@
 /**
- * progressDots.js — the "moment X of N" indicator.
+ * progressDots.js - the "moment X of N" indicator.
  *
  * Dots animate between states: upcoming → current (scale + glow pulse) →
  * done (fills with a soft tick of colour). The active dot gently pulses so

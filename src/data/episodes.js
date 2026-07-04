@@ -1,9 +1,9 @@
 /**
- * episodes.js — episode registry.
+ * episodes.js - episode registry.
  *
  * To add Episode 2: create src/data/episode2.js exporting an array of moments
  * (same shape as EPISODE_1), import it here, and add an entry to EPISODES.
- * The engine is episode-agnostic — it just plays whichever episode is active.
+ * The engine is episode-agnostic - it just plays whichever episode is active.
  */
 
 import { EPISODE_1 } from './scenarios.js';

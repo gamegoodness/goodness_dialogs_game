@@ -1,5 +1,5 @@
 /**
- * portrait.js — the story illustration standing on the stage.
+ * portrait.js - the story illustration standing on the stage.
  *
  * The art in /assets/images/<moment>/ is a set of transparent cutout
  * illustrations, one per story beat (e.g. "2/mom_hug_milo.png"). Story beats
@@ -37,7 +37,7 @@ export function createPortrait(initialImg) {
     }
     current = file;
     // Stay hidden until the new illustration has loaded, then replay the
-    // entrance — otherwise the previous image shows during the swap.
+    // entrance - otherwise the previous image shows during the swap.
     root.classList.remove('portrait-in', 'portrait-pop');
     root.classList.add('portrait-empty');
     img.onload = () => {

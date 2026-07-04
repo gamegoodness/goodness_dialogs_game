@@ -1,5 +1,5 @@
 /**
- * transitions.js — scene swapping + a global input guard.
+ * transitions.js - scene swapping + a global input guard.
  *
  * swapScene() animates the outgoing scene out and the incoming scene in, so
  * every screen change (title → moment → outcome → next → final) is a smooth
@@ -21,7 +21,7 @@ function wait(ms) {
 
 /**
  * Swap the single child of `container` for `newEl` with out/in animations.
- * direction: 'forward' | 'back' | 'fade' — controls slide direction.
+ * direction: 'forward' | 'back' | 'fade' - controls slide direction.
  */
 export async function swapScene(container, newEl, direction = 'forward') {
   const old = container.firstElementChild;

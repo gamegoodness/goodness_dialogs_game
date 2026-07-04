@@ -1,5 +1,5 @@
 /**
- * scenarios.js — THE CONTENT (source of truth).
+ * scenarios.js - THE CONTENT (source of truth).
  *
  * A faithful port of the SCENARIOS array from the original prototype. All
  * scenario text, choices, outcomes, scores (`s`) and virtues (`virt`) are

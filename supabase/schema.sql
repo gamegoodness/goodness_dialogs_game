@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Goodness Dialogs Game — Supabase setup
+-- Goodness Dialogs Game - Supabase setup
 --
 -- HOW TO RUN: Supabase dashboard → your project → SQL Editor → New query →
 -- paste this whole file → Run. Safe to re-run any time (it upgrades in place).
@@ -132,7 +132,7 @@ create policy "admin can read events"
 
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- ADMIN QUERIES — copy any of these into the SQL Editor to analyze the data.
+-- ADMIN QUERIES - copy any of these into the SQL Editor to analyze the data.
 -- (You can also browse both tables in Table Editor, and export CSV from
 --  the query results.)
 -- ═══════════════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-/* reset.css — minimal, kid-game-friendly reset.
+/* reset.css - minimal, kid-game-friendly reset.
  * The game now runs full-screen (a visual-novel style stage), so the body no
  * longer centers a small card: #app fills the whole viewport. */
 * { box-sizing: border-box; margin: 0; padding: 0; }

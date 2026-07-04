@@ -1,4 +1,4 @@
-/* tokens.css — design tokens (colours, radii, shadows, motion easing).
+/* tokens.css - design tokens (colours, radii, shadows, motion easing).
  * Animation *durations* live in JS (config.js -> --scene-out etc.); this file
  * holds the visual constants and easing curves. */
 :root {
@@ -21,14 +21,14 @@
   --paper: rgba(255, 255, 255, 0.96);
   --paper-soft: rgba(255, 255, 255, 0.72);
 
-  /* radii — sharp, game-UI edges */
+  /* radii - sharp, game-UI edges */
   --r-sm: 2px;
   --r-md: 3px;
   --r-lg: 4px;
   --r-xl: 4px;
   --r-pill: 3px;
 
-  /* shadow — hard offset shadows for a chunky game-panel feel */
+  /* shadow - hard offset shadows for a chunky game-panel feel */
   --shadow-1: 3px 3px 0 rgba(0, 0, 0, 0.35);
   --shadow-2: 4px 4px 0 rgba(0, 0, 0, 0.4);
   --shadow-card: 6px 6px 0 rgba(0, 0, 0, 0.3);

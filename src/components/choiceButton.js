@@ -1,5 +1,5 @@
 /**
- * choiceButton.js — a tactile choice button.
+ * choiceButton.js - a tactile choice button.
  *
  * Feel details:
  *  - staggered entrance (each button floats up slightly after the previous),
