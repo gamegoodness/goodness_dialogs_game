@@ -38,21 +38,40 @@ export const ASSETS = {
   },
 };
 
+/**
+ * PLACEHOLDERS — temporary common art while the real per-scenario art is made.
+ *
+ * While `background` is set, EVERY scenario uses that one background image.
+ * While `character` is set, EVERY speaker uses that one portrait image.
+ * Set either to null to switch back to the real per-scenario / per-character
+ * art (moment.image and ASSETS.characters) with no other code changes.
+ */
+export const PLACEHOLDERS = {
+  background: 'bg-scenario-1.png',
+  character: 'milo.png',
+};
+
 /** Resolve a scenario background image path (falls back to CSS gradient only). */
 export function bgImage(fileName) {
-  return fileName ? IMG + fileName : null;
+  const file = PLACEHOLDERS.background || fileName;
+  return file ? IMG + file : null;
 }
 
 /** Resolve a character portrait path by its key (see ASSETS.characters). */
 export function charImage(key) {
+  if (PLACEHOLDERS.character) return IMG + PLACEHOLDERS.character;
   return ASSETS.characters[key] || null;
 }
 
 export const TIMING = {
   // Typewriter
-  typeCharMs: 22,        // ms per character for narration/dialogue
-  typePunctMs: 180,      // extra pause after . ! ? — , (adds weight)
+  typeCharMs: 22,        // ms per character for narration
+  dialogueCharMs: 36,    // ms per character when a CHARACTER is speaking (slower, more weight)
+  typePunctMs: 180,      // extra pause after punctuation (adds weight)
   typeStartDelay: 120,   // ms before typing begins after a scene settles
+
+  // Scenario title card (shown at the start of every moment)
+  sceneCardMs: 2400,     // auto-dismiss delay (a tap dismisses it sooner)
 
   // Scene transitions (must match CSS var --scene-transition)
   sceneOutMs: 320,       // old scene fades/slides out
