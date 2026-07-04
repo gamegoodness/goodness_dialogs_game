@@ -34,6 +34,7 @@ import { createScorePill } from '../components/scoreBadge.js';
 import { createChoiceButton } from '../components/choiceButton.js';
 import { TIMING, bgImage } from '../data/config.js';
 import { CHARACTER_NAMES } from '../data/scenarios.js';
+import { logEvent } from '../engine/analytics.js';
 import {
   G, moment, branch, outcome, total, isLastMoment,
   pick, pick2, goNext, replayThis, skipReflect,
@@ -146,7 +147,11 @@ export function createGameScene(app) {
   function showOk() { okBtn.classList.add('show'); }
   function hideOk() { okBtn.classList.remove('show'); }
 
-  skipBtn.addEventListener('click', () => { if (activeRun) activeRun.skip(); });
+  skipBtn.addEventListener('click', () => {
+    if (!activeRun) return;
+    logEvent('story_skipped', { moment: moment().id, phase: G.phase });
+    activeRun.skip();
+  });
 
   async function playStory({ beats, body, summary }) {
     const run = { cancelled: false, tw: null, resolve: null, okH: null };
@@ -300,8 +305,11 @@ export function createGameScene(app) {
       const textarea = el('textarea.rinput', {
         rows: 2, placeholder: 'Type your thoughts, or just think it through...',
       });
+      reflectInput = textarea;
       const skip = el('span.rskip', {}, ["Skip, I've thought about it"]);
       skip.addEventListener('click', () => {
+        logEvent('reflection_skipped', { moment: s.id });
+        reflectInput = null;
         skipReflect();
         reflectBox.classList.add('rbox-collapse');
         setTimeout(() => reflectBox.remove(), 320);
@@ -349,8 +357,16 @@ export function createGameScene(app) {
 
   // ── Handlers (all guarded) ───────────────────────────────────────────────
 
+  // The outcome screen's reflection textarea, so Next can log what was typed.
+  let reflectInput = null;
+
   function chooseC1(letter) {
     guard.run(async () => {
+      const s = moment();
+      logEvent('choice_1', {
+        moment: s.id, title: s.title, choice: letter,
+        text: (letter === 'A' ? s.A : s.B).text,
+      });
       pick(letter);
       angel.speak(G.al, G.am);
       await renderPhase('forward');
@@ -359,7 +375,13 @@ export function createGameScene(app) {
 
   function chooseC2(letter) {
     guard.run(async () => {
+      const s = moment();
       pick2(letter === 'A' ? 'A2' : 'B2');
+      const o = outcome();
+      logEvent('choice_2', {
+        moment: s.id, title: s.title, path: G.path, choice: letter,
+        text: o.text, score: o.s, outcome: o.oc.title, virtue: o.oc.virt,
+      });
       pill.update(G.score);
       dots.setCurrent(G.idx);
       angel.speak(G.al, G.am);
@@ -369,6 +391,8 @@ export function createGameScene(app) {
 
   function onTryDifferently() {
     guard.run(async () => {
+      logEvent('try_differently', { moment: moment().id, score_undone: outcome().s });
+      reflectInput = null;
       replayThis();
       pill.update(G.score);
       angel.speak(G.al, G.am);
@@ -380,7 +404,16 @@ export function createGameScene(app) {
   function onNext() {
     guard.run(async () => {
       sfx.advance();
+      if (reflectInput && reflectInput.value.trim()) {
+        logEvent('reflection', {
+          moment: moment().id, text: reflectInput.value.trim().slice(0, 500),
+        });
+      }
+      reflectInput = null;
       const wasLast = isLastMoment();
+      if (wasLast) {
+        logEvent('episode_complete', { score: G.score, virtues: [...G.virtues] });
+      }
       goNext();
       if (wasLast) { await app.toFinal(); return; }
       // New moment: crossfade background, clear the stage art, retitle,

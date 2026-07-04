@@ -28,6 +28,29 @@ there is nothing to compile.
 
 ---
 
+## Student form + analytics (Supabase)
+
+Before the game starts, students fill a small form (name, age, town, country).
+The form answers and every in-game interaction (choices, outcomes, skips,
+reflections, final score) are logged to Supabase so an admin can analyze how
+students played. Setup (once):
+
+1. In the [Supabase dashboard](https://supabase.com/dashboard): **SQL Editor →
+   New query**, paste all of [`supabase/schema.sql`](supabase/schema.sql), Run.
+2. **Settings → API**: copy the *Project URL* and the *anon public* key into
+   [`src/data/supabase.js`](src/data/supabase.js).
+
+That's it. The anon key is safe in the browser: the SQL sets row-level-security
+policies so the game can only *insert* rows, never read or change them. If the
+keys are left empty the game plays normally and simply logs nothing.
+
+**Analyzing the data:** open **Table Editor** (`students`, `game_events`) to
+browse, or use the ready-made admin queries at the bottom of
+`supabase/schema.sql` (per-moment choice breakdowns, final scores, reflections,
+one child's full playthrough, averages by country).
+
+---
+
 ## Tech stack — and why
 
 **Vanilla JavaScript + native ES modules + CSS animations. No framework, no

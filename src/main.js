@@ -13,9 +13,11 @@ import { TIMING } from './data/config.js';
 import { swapScene } from './engine/transitions.js';
 import { createBackground } from './components/background.js';
 import { createTitleScene } from './scenes/titleScene.js';
+import { createFormScene } from './scenes/formScene.js';
 import { createGameScene } from './scenes/gameScene.js';
 import { createFinalScene } from './scenes/finalScene.js';
 import { startGame, replayGame, G } from './engine/state.js';
+import { startSession, logEvent } from './engine/analytics.js';
 
 // Expose animation timings to CSS so JS + CSS stay in sync (see config.js).
 function applyTimingVars() {
@@ -50,7 +52,13 @@ function boot() {
 
   const app = {
     background,
-    async toGame() { startGame(); await mount(createGameScene(app), 'forward'); },
+    async toForm() { await mount(createFormScene(app), 'forward'); },
+    async toGame() {
+      startGame();
+      startSession();
+      logEvent('game_start', {});
+      await mount(createGameScene(app), 'forward');
+    },
     async toFinal() { G.screen = 'final'; await mount(createFinalScene(app), 'forward'); },
     async toTitle() { replayGame(); await mount(createTitleScene(app), 'back'); },
   };

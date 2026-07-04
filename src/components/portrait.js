@@ -21,17 +21,32 @@ export function createPortrait(initialImg) {
   function setImage(file) {
     if (!file) {
       current = null;
+      // The entrance animation classes must go too: their fill-mode opacity
+      // outranks .portrait-empty, which is how a finished story's character
+      // used to linger into the next one.
+      root.classList.remove('portrait-in', 'portrait-pop');
       root.classList.add('portrait-empty');
+      // After the fade-out, drop the old art entirely so the next story can
+      // never flash the previous story's character while its image loads.
+      setTimeout(() => { if (!current) img.removeAttribute('src'); }, 500);
       return;
     }
-    root.classList.remove('portrait-empty');
-    if (file === current) return;
+    if (file === current) {
+      root.classList.remove('portrait-empty');
+      return;
+    }
     current = file;
-    img.src = storyImage(file);
-    // Replay the entrance so a new illustration steps onto the stage.
+    // Stay hidden until the new illustration has loaded, then replay the
+    // entrance — otherwise the previous image shows during the swap.
     root.classList.remove('portrait-in', 'portrait-pop');
-    void root.offsetWidth;
-    root.classList.add('portrait-in');
+    root.classList.add('portrait-empty');
+    img.onload = () => {
+      if (current !== file) return;
+      root.classList.remove('portrait-empty');
+      void root.offsetWidth;
+      root.classList.add('portrait-in');
+    };
+    img.src = storyImage(file);
   }
 
   setImage(initialImg || null);

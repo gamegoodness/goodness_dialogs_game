@@ -25,7 +25,7 @@ export function createTitleScene(app) {
   startBtn.addEventListener('click', () => {
     guard.run(async () => {
       sfx.advance();
-      await app.toGame();
+      await app.toForm();
     });
   });
 
