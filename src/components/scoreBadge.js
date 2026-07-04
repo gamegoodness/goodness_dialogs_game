@@ -15,7 +15,7 @@ function fmt(n) { return (n >= 0 ? '+' : '') + n; }
 /** Small top-bar pill. */
 export function createScorePill(score) {
   const val = el('span.pill-val', {}, [fmt(score)]);
-  const pill = el('div.pill', {}, ['💛 ', val]);
+  const pill = el('div.pill', {}, [el('span.gem', {}, ['💛']), val]);
   return {
     el: pill,
     /** Bump the pill and update its value. */

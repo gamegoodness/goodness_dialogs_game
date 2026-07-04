@@ -34,6 +34,22 @@
 .angel-enter { animation: angelEnter var(--angel-enter) var(--ease-bounce) both; }
 .angel-img { animation: angelIdle var(--angel-idle) var(--ease-in-out) infinite; }
 
+/* ── Character portrait (visual-novel stage) ───────────────────────────── */
+@keyframes portraitIn {
+  from { opacity: 0; transform: translate(26px, 30px) scale(.95); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes portraitOut { from { opacity: 1; } to { opacity: 0; transform: translate(14px, 14px) scale(.97); } }
+@keyframes charFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+.portrait-in  { animation: portraitIn var(--angel-enter) var(--ease-out) both; }
+.portrait-out { animation: portraitOut var(--scene-out) var(--ease-in-out) both; }
+.portrait-img { animation: charFloat 5.6s var(--ease-in-out) infinite; }
+
+/* ── Tap-to-continue hint ──────────────────────────────────────────────── */
+@keyframes tapBounce { 0%,100% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(3px); opacity: 1; } }
+.tap-hint .caret { animation: tapBounce 1.1s var(--ease-in-out) infinite; }
+
 /* ── Typewriter caret ──────────────────────────────────────────────────── */
 @keyframes caretBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 .tw-caret {
