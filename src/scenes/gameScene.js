@@ -1,24 +1,26 @@
 /**
  * gameScene.js — the interactive heart of the game (visual-novel style).
  *
- * Every moment now plays as a STORY, not a single message:
+ * Every moment plays as an illustrated STORY, not a single message:
  *
  *   1. A scenario TITLE CARD introduces the scene ("Moment 1 · The lunchbox").
- *   2. The story plays beat by beat (moment.intro / branch.story). Narrator
- *      beats explain the scenario; character beats put the game in FOCUS MODE:
- *      the background and HUD blur + darken behind a dim layer while the
- *      speaking character's portrait and their slowly-typed line take all the
- *      attention. An OK button advances from beat to beat; a Skip button jumps
- *      straight to the choices (also useful on "Try differently" replays).
+ *   2. The story plays beat by beat (moment.intro / branch.story) over the
+ *      moment's background art. Beats that carry an `img` bring the matching
+ *      story illustration onto the stage (crossfading like a picture book).
+ *      Narrator beats type into the story box at the bottom. Character beats
+ *      put the game in FOCUS MODE: the backdrop blurs + darkens and the line
+ *      is spoken from a SPEECH BUBBLE with the speaker's name on it, so the
+ *      dialog reads as that person talking. An OK button advances from beat
+ *      to beat; a Skip button jumps straight to the choices.
  *   3. After the last beat the choices appear as the game menu.
  *
  * Phases per moment:  c1 (story + first choice)  ->  c2 (story + second
  * choice)  ->  outcome (result banner + reflection + Next / Try differently).
  *
- * The stage (HUD, angel, portrait, dim layer) is persistent; only the dialog
- * content area swaps between phases. Every navigation action is wrapped in
- * `guard.run` (global transition lock) and the choices container self-locks on
- * first click, so rapid clicking can never double-fire a transition.
+ * The stage (HUD, angel, illustration, dim layer, bubble) is persistent; only
+ * the dialog content area swaps between phases. Every navigation action is
+ * wrapped in `guard.run` (global transition lock) and the choices container
+ * self-locks on first click, so rapid clicking can never double-fire.
  */
 
 import { el } from '../engine/dom.js';
@@ -58,27 +60,35 @@ export function createGameScene(app) {
     ]),
   ]);
 
-  // ── Stage: angel, focus dim layer, character portrait ───────────────────
+  // ── Stage: angel, focus dim layer, story illustration, speech bubble ────
   // DOM order matters: the dim layer paints ABOVE the angel (and blurs the
-  // whole backdrop behind it) but BELOW the portrait, so when a character
-  // talks, everything blurs and darkens except the talker.
+  // whole backdrop behind it) but BELOW the illustration and the speech
+  // bubble, so when a character talks, everything blurs and darkens except
+  // the scene art and the words coming out of it.
   const angel = createAngel(G.am, G.al);
   const focusDim = el('div.focus-dim');
-  const portrait = createPortrait(moment().char);
+  const portrait = createPortrait(null);
 
-  const stage = el('div.stage', {}, [angel.el, focusDim, portrait.el]);
+  // The speech bubble: character lines type HERE, next to the illustration,
+  // with a tail pointing at it — not in the narrator box at the bottom.
+  const speechName = el('div.speech-name');
+  const speechText = el('div.speech-text');
+  const speech = el('div.speech', {}, [speechName, speechText]);
+
+  const skipBtn = el('button.skip-btn', { type: 'button' }, ['Skip story ▸▸']);
+  const stage = el('div.stage', {}, [angel.el, focusDim, portrait.el, speech, skipBtn]);
 
   // ── Dialog box (narrator + choices) ──────────────────────────────────────
   const nameplate = el('div.nameplate');
   const contentArea = el('div.content-area');
 
+  // The OK button MOVES between containers: it sits inside the speech bubble
+  // while a character talks, and inside the dialog box during narration.
   const okBtn = el('button.ok-btn', { type: 'button' }, [
     'OK ', el('span.arr', {}, ['▸']),
   ]);
-  const skipBtn = el('button.skip-btn', { type: 'button' }, ['Skip story ▸▸']);
   const dialog = el('div.dialog', {}, [
     nameplate,
-    skipBtn,
     el('div.dialog-inner', {}, [contentArea]),
     okBtn,
   ]);
@@ -86,7 +96,7 @@ export function createGameScene(app) {
   const layer = el('div.scene.vn', {}, [hud, stage, dialog]);
 
   // Set per-moment chrome: label, virtue tag chip, and theme colour (--tc drives
-  // the nameplate, tag chip, OK button and portrait glow).
+  // the nameplate, tag chip, OK button and bubble border).
   function applyMomentChrome() {
     const s = moment();
     momentLabel.textContent = `Moment ${s.id} of ${total()}`;
@@ -102,24 +112,34 @@ export function createGameScene(app) {
     );
   }
 
-
-  /** Focus mode on/off: who is talking right now (null = narrator). */
-  function setFocus(who) {
+  /** Focus mode on/off for one story beat (null beat = back to narrator).
+   * Character: dim + blur everything, show the speech bubble with the
+   * speaker's name (the bottom dialog box recedes), OK moves into the bubble.
+   * Narrator: bubble hides, dialog box returns, OK moves back to the dialog. */
+  function setFocus(beat) {
+    const who = beat && beat.who;
+    if (beat && beat.img) portrait.show(beat.img);
     if (who) {
-      layer.classList.add('focused');
-      portrait.speak(who);
-      setNameplate('🗣️', CHARACTER_NAMES[who] || who);
+      layer.classList.add('focused', 'charline');
+      portrait.speak(beat.img);
+      speechName.textContent = CHARACTER_NAMES[who] || who;
+      speech.classList.remove('speech-pop');
+      void speech.offsetWidth;
+      speech.classList.add('speech-pop');
+      speech.appendChild(okBtn);
     } else {
-      layer.classList.remove('focused');
+      layer.classList.remove('focused', 'charline');
       setNameplate('📖', 'Story');
+      dialog.appendChild(okBtn);
     }
   }
 
   // ── Story sequencer ──────────────────────────────────────────────────────
-  // Plays an array of beats into `body`, one at a time. Character beats type
-  // slowly in focus mode; the OK button advances between beats. Skip cancels
-  // the sequence and shows the one-line summary instead. Returns after the
-  // last beat (or after skip) — the caller then reveals the choices.
+  // Plays an array of beats into the stage + `body`, one at a time. Character
+  // beats type slowly into their speech bubble in focus mode; the OK button
+  // advances between beats. Skip cancels the sequence and shows the one-line
+  // summary (plus the last illustration) instead. Returns after the last beat
+  // (or after skip) — the caller then reveals the choices.
 
   let activeRun = null;
 
@@ -141,12 +161,14 @@ export function createGameScene(app) {
 
     for (let i = 0; i < beats.length && !run.cancelled && alive; i++) {
       const beat = beats[i];
-      setFocus(beat.who || null);
+      setFocus(beat);
 
-      // Type the line: slow for characters, normal for narration.
+      // Character lines type into THEIR speech bubble (slowly); narration
+      // types into the bottom story box.
+      const target = beat.who ? speechText : body;
       await new Promise((res) => {
         run.resolve = res;
-        run.tw = track(typewrite(body, beat.text, {
+        run.tw = track(typewrite(target, beat.text, {
           charMs: beat.who ? TIMING.dialogueCharMs : TIMING.typeCharMs,
           onDone: res,
         }));
@@ -170,9 +192,12 @@ export function createGameScene(app) {
     if (!alive) return;
     setFocus(null);
     if (run.cancelled) {
-      // Skipped: show the scene summary so the player still has the context.
+      // Skipped: show the scene summary + final illustration so the player
+      // still has the context the story would have given them.
       typers.forEach((t) => t && t.cancel && t.cancel());
       body.textContent = summary;
+      const lastArt = [...beats].reverse().find((b) => b.img);
+      if (lastArt) portrait.show(lastArt.img);
     }
   }
 
@@ -257,6 +282,7 @@ export function createGameScene(app) {
     const s = moment();
     const oc = outcome().oc;
     setNameplate('✨', 'What happened');
+    if (oc.img) portrait.show(oc.img);
 
     const ocCard = el('div.ocard.ocard-reveal', { style: { background: oc.bg } }, [
       el('div.oicon', {}, [oc.icon]),
@@ -346,6 +372,7 @@ export function createGameScene(app) {
       replayThis();
       pill.update(G.score);
       angel.speak(G.al, G.am);
+      portrait.show(null); // the intro story repaints its own illustrations
       await renderPhase('back');
     });
   }
@@ -356,11 +383,12 @@ export function createGameScene(app) {
       const wasLast = isLastMoment();
       goNext();
       if (wasLast) { await app.toFinal(); return; }
-      // New moment: crossfade background, swap portrait, retitle, animate dots,
-      // then introduce the scenario with its title card before the story plays.
+      // New moment: crossfade background, clear the stage art, retitle,
+      // animate dots, then introduce the scenario with its title card before
+      // the story plays.
       app.background.crossfadeTo({ gradient: moment().bg, image: bgImage(moment().image) });
       applyMomentChrome();
-      portrait.show(moment().char);
+      portrait.show(null);
       dots.setCurrent(G.idx);
       angel.speak(G.al, G.am);
       await showSceneCard();

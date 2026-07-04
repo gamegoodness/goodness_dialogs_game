@@ -23,7 +23,11 @@ export function createBackground(host) {
     // at reduced opacity so both art and theme read well.
     layer.style.background = gradient || '#1A2E26';
     if (image) {
-      layer.style.setProperty('--bg-image', `url("${image}")`);
+      // Resolve to an absolute URL: a relative url() inside a custom property
+      // is resolved against the stylesheet that uses it (/src/styles/), not
+      // the page, so "./assets/..." would silently 404.
+      const abs = new URL(image, document.baseURI).href;
+      layer.style.setProperty('--bg-image', `url("${abs}")`);
       layer.classList.add('has-image');
     } else {
       layer.style.removeProperty('--bg-image');

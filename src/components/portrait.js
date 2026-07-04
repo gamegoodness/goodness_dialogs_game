@@ -1,44 +1,49 @@
 /**
- * portrait.js — the featured character standing on the stage.
+ * portrait.js — the story illustration standing on the stage.
  *
- * Each moment has a `char` key (see scenarios.js) naming the person the scene is
- * about, and every story beat can name a speaker. The portrait rises in from
- * behind the dialog box when the moment begins, gently floats while on screen,
- * and pops slightly each time a character starts speaking (`speak(key)`), so
- * the player's eye goes to whoever is talking.
- *
- * While PLACEHOLDERS.character is set in config.js, every speaker renders with
- * the same common placeholder art; drop real art in later and it swaps per key.
+ * The art in /assets/images/<moment>/ is a set of transparent cutout
+ * illustrations, one per story beat (e.g. "2/mom_hug_milo.png"). Story beats
+ * and outcome cards name the illustration they want via their `img` field
+ * (see scenarios.js); the scene calls show(img) and this component crossfades
+ * from the previous illustration to the new one, like turning the page of a
+ * picture book. speak() gives a small attention pop when a character talks.
  */
 
 import { el } from '../engine/dom.js';
-import { charImage } from '../data/config.js';
-import { CHARACTER_NAMES } from '../data/scenarios.js';
+import { storyImage } from '../data/config.js';
 
-export function createPortrait(charKey) {
-  const img = el('img.portrait-img', {
-    src: charImage(charKey) || '', alt: CHARACTER_NAMES[charKey] || '', draggable: false,
-  });
-  const root = el('div.portrait.portrait-in', {}, [img]);
+export function createPortrait(initialImg) {
+  const img = el('img.portrait-img', { alt: '', draggable: false });
+  const root = el('div.portrait', {}, [img]);
 
-  function setChar(key) {
-    const src = charImage(key);
-    if (src && img.src !== src) img.src = src;
-    img.alt = CHARACTER_NAMES[key] || '';
+  let current = null;
+
+  function setImage(file) {
+    if (!file) {
+      current = null;
+      root.classList.add('portrait-empty');
+      return;
+    }
+    root.classList.remove('portrait-empty');
+    if (file === current) return;
+    current = file;
+    img.src = storyImage(file);
+    // Replay the entrance so a new illustration steps onto the stage.
+    root.classList.remove('portrait-in', 'portrait-pop');
+    void root.offsetWidth;
+    root.classList.add('portrait-in');
   }
+
+  setImage(initialImg || null);
 
   return {
     el: root,
-    /** Swap to a new character and replay the full entrance (new moment). */
-    show(newKey) {
-      setChar(newKey);
-      root.classList.remove('portrait-in', 'portrait-pop');
-      void root.offsetWidth;
-      root.classList.add('portrait-in');
-    },
+    /** Show a story illustration (null hides the stage art). */
+    show(file) { setImage(file); },
     /** A character starts talking: swap art if needed + quick attention pop. */
-    speak(key) {
-      setChar(key);
+    speak(file) {
+      if (file && file !== current) { setImage(file); return; }
+      if (!current) return;
       root.classList.remove('portrait-in', 'portrait-pop');
       void root.offsetWidth;
       root.classList.add('portrait-pop');

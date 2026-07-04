@@ -15,18 +15,14 @@
 const IMG = './assets/images/';
 
 export const ASSETS = {
-  angel: IMG + 'angel.png',
-  logo: IMG + 'logo.png',
-  characters: {
-    milo: IMG + 'milo.png',
-    priya: IMG + 'priya.png',
-    jai: IMG + 'jai.png',
-    sam: IMG + 'sam.png',
-  },
+  angel: IMG + 'good angel/angel good (1).svg',
+  logo: IMG + 'good angel/angel good (1).svg',
   backgrounds: {
-    title: IMG + 'bg-title.png',
-    final: IMG + 'bg-final.png',
-    // scenario backgrounds are referenced per-moment via moment.image
+    // Scenario backgrounds 1-6 map to moments 1-6 (see each moment's `image`
+    // in scenarios.js). backgrounds/7.png is reserved for the upcoming
+    // episode — not used yet. Title/final reuse scenario art meanwhile.
+    title: IMG + 'backgrounds/1.png',
+    final: IMG + 'backgrounds/6.png',
   },
   icons: {
     heart: IMG + 'icon-heart.png',
@@ -38,29 +34,14 @@ export const ASSETS = {
   },
 };
 
-/**
- * PLACEHOLDERS — temporary common art while the real per-scenario art is made.
- *
- * While `background` is set, EVERY scenario uses that one background image.
- * While `character` is set, EVERY speaker uses that one portrait image.
- * Set either to null to switch back to the real per-scenario / per-character
- * art (moment.image and ASSETS.characters) with no other code changes.
- */
-export const PLACEHOLDERS = {
-  background: 'bg-scenario-1.png',
-  character: 'milo.png',
-};
-
 /** Resolve a scenario background image path (falls back to CSS gradient only). */
 export function bgImage(fileName) {
-  const file = PLACEHOLDERS.background || fileName;
-  return file ? IMG + file : null;
+  return fileName ? IMG + fileName : null;
 }
 
-/** Resolve a character portrait path by its key (see ASSETS.characters). */
-export function charImage(key) {
-  if (PLACEHOLDERS.character) return IMG + PLACEHOLDERS.character;
-  return ASSETS.characters[key] || null;
+/** Resolve a story illustration path (moment/beat art under assets/images). */
+export function storyImage(fileName) {
+  return fileName ? IMG + fileName : null;
 }
 
 export const TIMING = {
