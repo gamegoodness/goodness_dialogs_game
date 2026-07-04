@@ -342,6 +342,24 @@
   border-radius: var(--r-sm); color: #FFE39A; line-height: 1.5;
 }
 
+/* ── In-scenario thought box (first choice screen) ─────────────────────── */
+.thoughtbox { margin-top: 16px; }
+.thought-q {
+  font-size: 14px; font-weight: 700; letter-spacing: .04em;
+  color: var(--paper-soft); margin-bottom: 7px;
+  display: flex; align-items: center; gap: 6px;
+}
+.thought-input {
+  width: 100%; background: rgba(255,255,255,.08);
+  border: 2px solid rgba(255,255,255,.16); border-radius: var(--r-sm);
+  color: #fff; font-size: 16px; padding: 11px 13px; line-height: 1.5;
+  resize: none; font-family: inherit;
+}
+.thought-input::placeholder { color: rgba(255,255,255,.4); }
+.thought-input:focus {
+  outline: none; border-color: var(--tc, var(--accent)); background: rgba(255,255,255,.12);
+}
+
 /* ── Choices (game menu) ───────────────────────────────────────────────── */
 .choices { display: flex; flex-direction: column; gap: 11px; margin-top: 18px; }
 .choices.locked { pointer-events: none; }

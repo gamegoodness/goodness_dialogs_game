@@ -74,7 +74,7 @@ function scorePill(n) {
 
 function renderStats() {
   const completes = events.filter((e) => e.event_type === 'episode_complete');
-  const reflections = events.filter((e) => e.event_type === 'reflection');
+  const written = events.filter((e) => e.event_type === 'reflection' || e.event_type === 'thought');
   const avg = completes.length
     ? (completes.reduce((s, e) => s + Number(e.data.score || 0), 0) / completes.length).toFixed(1)
     : '—';
@@ -85,7 +85,7 @@ function renderStats() {
     card(new Set(events.map((e) => e.session_id)).size, 'Playthroughs') +
     card(completes.length, 'Completed') +
     card(avg, 'Avg final score') +
-    card(reflections.length, 'Reflections');
+    card(written.length, 'Written notes');
 }
 
 function renderStudents() {
@@ -119,6 +119,7 @@ function describe(e) {
   const m = d.moment != null ? `Moment ${esc(d.moment)}` : '';
   switch (e.event_type) {
     case 'game_start': return '▶️ Started playing';
+    case 'thought': return `💭 ${m} — thought before choosing: “${esc(d.text)}”`;
     case 'choice_1': return `🅰️ ${m} “${esc(d.title)}” — first choice <b>${esc(d.choice)}</b>: ${esc(d.text)}`;
     case 'choice_2': return `🅱️ ${m} — second choice <b>${esc(d.choice)}</b>: ${esc(d.text)} → ${scorePill(d.score)} ${esc(d.virtue || '')}`;
     case 'story_skipped': return `⏭️ ${m} — skipped the story`;
@@ -194,21 +195,84 @@ function renderChoices() {
 }
 
 function renderReflections() {
-  const refl = events.filter((e) => e.event_type === 'reflection')
+  const written = events
+    .filter((e) => e.event_type === 'thought' || e.event_type === 'reflection')
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  if (!refl.length) {
-    $('reflections').innerHTML = '<div class="quiet">No written reflections yet.</div>';
+  if (!written.length) {
+    $('reflections').innerHTML = '<div class="quiet">No written thoughts or reflections yet.</div>';
     return;
   }
-  const rows = refl.map((e) => {
+  const rows = written.map((e) => {
     const s = byId.get(e.student_id);
-    return `<tr><td>${esc(s ? s.name : '—')}</td><td>${esc(e.data.moment)}</td>
+    const kind = e.event_type === 'thought'
+      ? '<span class="pill">Thought</span>'
+      : '<span class="pill" style="background:rgba(255,205,90,.15);color:#FFE39A">Reflection</span>';
+    return `<tr><td>${esc(s ? s.name : '—')}</td><td>${kind}</td><td>${esc(e.data.moment)}</td>
       <td>${esc(e.data.text)}</td>
       <td class="muted">${new Date(e.created_at).toLocaleString()}</td></tr>`;
   }).join('');
   $('reflections').innerHTML = `<table>
-    <thead><tr><th>Student</th><th>Moment</th><th>What they wrote</th><th>When</th></tr></thead>
+    <thead><tr><th>Student</th><th>Type</th><th>Moment</th><th>What they wrote</th><th>When</th></tr></thead>
     <tbody>${rows}</tbody></table>`;
+}
+
+// ── CSV export (download the whole data sheet) ─────────────────────────────
+
+function csvCell(v) {
+  const s = String(v == null ? '' : v);
+  return /[",\n\r]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+}
+
+function downloadCsv(filename, headers, rows) {
+  const lines = [headers.join(',')];
+  rows.forEach((r) => lines.push(headers.map((h) => csvCell(r[h])).join(',')));
+  // Leading BOM so Excel reads UTF-8 (accents, emoji) correctly.
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/** One flat sheet: every event, with the student's details on each row. */
+function exportCsv() {
+  const headers = [
+    'student_name', 'age', 'city', 'country', 'session_id', 'time',
+    'event_type', 'episode', 'moment', 'title', 'choice', 'choice_text',
+    'score', 'virtue', 'written_text',
+  ];
+  const isChoice = (t) => t === 'choice_1' || t === 'choice_2';
+  const isWritten = (t) => t === 'thought' || t === 'reflection';
+  const rows = events
+    .slice()
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    .map((e) => {
+      const s = byId.get(e.student_id) || {};
+      const d = e.data || {};
+      return {
+        student_name: s.name ?? '',
+        age: s.age ?? '',
+        city: s.city ?? '',
+        country: s.country ?? '',
+        session_id: e.session_id,
+        time: e.created_at,
+        event_type: e.event_type,
+        episode: e.episode ?? '',
+        moment: d.moment ?? '',
+        title: d.title ?? '',
+        choice: d.choice ?? '',
+        choice_text: isChoice(e.event_type) ? (d.text ?? '') : '',
+        score: d.score ?? '',
+        virtue: d.virtue ?? '',
+        written_text: isWritten(e.event_type) ? (d.text ?? '') : '',
+      };
+    });
+  const date = new Date().toISOString().slice(0, 10);
+  downloadCsv(`goodness-data-${date}.csv`, headers, rows);
 }
 
 // ── Load + auth flow ───────────────────────────────────────────────────────
@@ -267,6 +331,10 @@ $('login-btn').addEventListener('click', async () => {
 $('password').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('login-btn').click(); });
 $('refresh-btn').addEventListener('click', () => loadDashboard().catch((e) => showLogin(e.message)));
 $('logout-btn').addEventListener('click', () => showLogin());
+$('download-btn').addEventListener('click', () => {
+  if (!events.length) { alert('No data to download yet.'); return; }
+  exportCsv();
+});
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   showLogin('Supabase keys are missing in src/data/supabase.js');

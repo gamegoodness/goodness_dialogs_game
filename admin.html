@@ -94,7 +94,8 @@
           <h1>🕊️ Student analytics</h1>
           <div class="sub" id="loaded-at"></div>
         </div>
-        <div style="display:flex; gap:8px">
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <button id="download-btn">⬇ Download CSV</button>
           <button class="ghost" id="refresh-btn">↻ Refresh</button>
           <button class="ghost" id="logout-btn">Log out</button>
         </div>
@@ -115,7 +116,8 @@
       <h2>Choices by moment</h2>
       <div class="panel tbl-wrap" id="choices"></div>
 
-      <h2>Reflections</h2>
+      <h2>Thoughts &amp; reflections</h2>
+      <div class="sub" style="margin-bottom:8px">What students wrote — during a scenario (thought) and after it (reflection).</div>
       <div class="panel tbl-wrap" id="reflections"></div>
     </div>
 

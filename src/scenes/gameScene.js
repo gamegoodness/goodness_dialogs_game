@@ -253,6 +253,15 @@ export function createGameScene(app) {
       if (s.ambig) {
         content.appendChild(el('div.anote', {}, ['⚠️ ' + (s.ambigNote || 'Both choices have real costs.')]));
       }
+      // Optional "what do YOU think?" box, captured on the choice click below.
+      const thoughtArea = el('textarea.thought-input', {
+        rows: 2, placeholder: 'Optional: what would you do, and why? Type it here…',
+      });
+      thoughtInput = thoughtArea;
+      content.appendChild(el('div.thoughtbox', {}, [
+        el('div.thought-q', {}, ['💭 What are you thinking?']),
+        thoughtArea,
+      ]));
       content.appendChild(el('div.eyebrow.choose', {}, ['What should Milo do?']));
       content.appendChild(choicesRow([
         createChoiceButton({ letter: 'A', text: s.A.text, color: s.tc, index: 0, onSelect: chooseC1 }),
@@ -357,12 +366,20 @@ export function createGameScene(app) {
 
   // ── Handlers (all guarded) ───────────────────────────────────────────────
 
-  // The outcome screen's reflection textarea, so Next can log what was typed.
+  // The outcome screen's reflection textarea + the choice screen's thought
+  // textarea, so we can log whatever the student typed before advancing.
   let reflectInput = null;
+  let thoughtInput = null;
 
   function chooseC1(letter) {
     guard.run(async () => {
       const s = moment();
+      if (thoughtInput && thoughtInput.value.trim()) {
+        logEvent('thought', {
+          moment: s.id, title: s.title, text: thoughtInput.value.trim().slice(0, 500),
+        });
+      }
+      thoughtInput = null;
       logEvent('choice_1', {
         moment: s.id, title: s.title, choice: letter,
         text: (letter === 'A' ? s.A : s.B).text,
@@ -393,6 +410,7 @@ export function createGameScene(app) {
     guard.run(async () => {
       logEvent('try_differently', { moment: moment().id, score_undone: outcome().s });
       reflectInput = null;
+      thoughtInput = null;
       replayThis();
       pill.update(G.score);
       angel.speak(G.al, G.am);

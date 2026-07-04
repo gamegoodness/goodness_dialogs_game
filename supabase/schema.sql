@@ -17,7 +17,7 @@ create table if not exists public.students (
 );
 
 -- One row per interaction while playing.
--- event_type: game_start | choice_1 | choice_2 | story_skipped |
+-- event_type: game_start | thought | choice_1 | choice_2 | story_skipped |
 --             try_differently | reflection | reflection_skipped |
 --             episode_complete
 -- data: the details (moment, choice letter, choice text, score, virtue, ...)
@@ -62,7 +62,7 @@ create policy "game can insert events"
   on public.game_events for insert to anon
   with check (
     event_type in (
-      'game_start', 'choice_1', 'choice_2', 'story_skipped',
+      'game_start', 'thought', 'choice_1', 'choice_2', 'story_skipped',
       'try_differently', 'reflection', 'reflection_skipped',
       'episode_complete'
     )
