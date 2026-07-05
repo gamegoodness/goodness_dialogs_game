@@ -84,3 +84,13 @@ if (document.readyState === 'loading') {
 } else {
   boot();
 }
+
+// Chrome (more so than Edge) can restore a suspended tab from its
+// back/forward cache instead of loading fresh: the page reappears exactly as
+// it was frozen, with old timers, animations and DOM state resuming
+// mid-flight - this is what makes a scene's content look "stuck"/doubled-up
+// after switching tabs or using the back button. Force a real reload so the
+// game always restarts from a clean boot() instead of a frozen snapshot.
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) location.reload();
+});

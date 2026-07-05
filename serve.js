@@ -51,8 +51,13 @@ http.createServer((req, res) => {
     res.writeHead(200, {
       'Content-Type': TYPES[ext] || 'application/octet-stream',
       // Local dev server: always serve the file as it is on disk right now,
-      // never a browser-cached copy of an older edit.
-      'Cache-Control': 'no-store',
+      // never a browser-cached copy of an older edit. Belt-and-suspenders
+      // against every cache layer (Chrome in particular will keep a disk-
+      // cached copy of unversioned module/CSS files far longer than you'd
+      // expect otherwise).
+      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+      Pragma: 'no-cache',
+      Expires: '0',
     });
     res.end(data);
   });
