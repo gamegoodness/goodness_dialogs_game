@@ -235,7 +235,7 @@ export const EPISODE_1 = [
         sit: 'The test ends. Sam passes. Later Sam whispers: "Thank you. My parents would have been furious." But you feel uneasy.',
         story: [
           { who: null, text: 'Milo says nothing. The test ends, and Sam passes. Later, Sam finds Milo in the corridor.' },
-          { who: 'sam', text: 'Thank you for not telling. My parents would have been furious.' },
+          { who: 'sam', text: 'Thank you for not telling. My parents would have been furious.', img: '4/yes it was me, sorry.png' },
           { who: null, text: 'But something feels uneasy inside.' },
         ],
         am: 'curious', al: 'Loyalty is real. So is the unease...',
@@ -255,7 +255,7 @@ export const EPISODE_1 = [
         sit: 'Sam is asked to retake the test alone. At break, Sam finds you. "That was you, wasn\'t it."',
         story: [
           { who: null, text: 'After the test, Milo quietly tells the teacher. Sam is asked to retake the test alone.', img: '4/milo_tells_teacher_sam_copied.png' },
-          { who: 'sam', text: "That was you, wasn't it." },
+          { who: 'sam', text: "That was you, wasn't it.", img: '4/it was you right - sam to milo.png' },
           { who: null, text: "Sam's voice is quiet, but hurt." },
         ],
         am: 'sad', al: 'Honesty has a cost too...',
@@ -265,7 +265,7 @@ export const EPISODE_1 = [
         },
         B2: {
           text: 'Deny it was you', s: -2,
-          oc: { icon: '😔', title: 'A lie on top of honesty', col: '#993C1D', bg: '#FAECE7', txt: "Sam doesn't believe you. You did the honest thing then flinched from it. Two wrongs in one story.", virt: 'Reflection on Dishonesty' },
+          oc: { icon: '😔', title: 'A lie on top of honesty', col: '#993C1D', bg: '#FAECE7', txt: "Sam doesn't believe you. You did the honest thing then flinched from it. Two wrongs in one story.", virt: 'Reflection on Dishonesty', img: '4/deny it was milo.png' },
         },
       },
     },

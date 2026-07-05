@@ -465,8 +465,16 @@ export function createGameScene(app) {
       portrait.show(null);
       dots.setCurrent(G.idx);
       angel.speak(G.al, G.am);
+      // Swap the previous moment's leftover outcome content out of
+      // contentArea BEFORE the title card shows (not after) - otherwise it
+      // sits there, dimly visible behind the card, for as long as the card is
+      // up. Building the new phase but holding its `_start()` (which is what
+      // kicks off the story typewriter) until the card is dismissed keeps
+      // each scenario fully separate from the one before it.
+      const content = build(G.phase);
+      await swapScene(contentArea, content, 'forward');
       await showSceneCard();
-      await renderPhase('forward');
+      if (alive && content._start) content._start();
     });
   }
 
