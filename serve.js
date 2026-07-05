@@ -48,7 +48,12 @@ http.createServer((req, res) => {
       return;
     }
     const ext = path.extname(filePath).toLowerCase();
-    res.writeHead(200, { 'Content-Type': TYPES[ext] || 'application/octet-stream' });
+    res.writeHead(200, {
+      'Content-Type': TYPES[ext] || 'application/octet-stream',
+      // Local dev server: always serve the file as it is on disk right now,
+      // never a browser-cached copy of an older edit.
+      'Cache-Control': 'no-store',
+    });
     res.end(data);
   });
 }).listen(port, () => {
