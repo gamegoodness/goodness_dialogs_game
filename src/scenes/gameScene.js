@@ -17,7 +17,7 @@
  * Phases per moment:  c1 (story + first choice)  ->  c2 (story + second
  * choice)  ->  outcome (result banner + reflection + Next / Try differently).
  *
- * The stage (HUD, angel, illustration, dim layer, bubble) is persistent; only
+ * The stage (HUD, illustration, dim layer, bubble) is persistent; only
  * the dialog content area swaps between phases. Every navigation action is
  * wrapped in `guard.run` (global transition lock) and the choices container
  * self-locks on first click, so rapid clicking can never double-fire.
@@ -27,7 +27,6 @@ import { el } from '../engine/dom.js';
 import { typewrite } from '../engine/typewriter.js';
 import { swapScene, guard } from '../engine/transitions.js';
 import { sfx } from '../engine/audio.js';
-import { createAngel } from '../components/angel.js';
 import { createPortrait } from '../components/portrait.js';
 import { createProgressDots } from '../components/progressDots.js';
 import { createScorePill } from '../components/scoreBadge.js';
@@ -61,12 +60,11 @@ export function createGameScene(app) {
     ]),
   ]);
 
-  // ── Stage: angel, focus dim layer, story illustration, speech bubble ────
-  // DOM order matters: the dim layer paints ABOVE the angel (and blurs the
-  // whole backdrop behind it) but BELOW the illustration and the speech
-  // bubble, so when a character talks, everything blurs and darkens except
-  // the scene art and the words coming out of it.
-  const angel = createAngel(G.am, G.al);
+  // ── Stage: focus dim layer, story illustration, speech bubble ───────────
+  // DOM order matters: the dim layer paints ABOVE the backdrop (blurring it)
+  // but BELOW the illustration and the speech bubble, so when a character
+  // talks, everything blurs and darkens except the scene art and the words
+  // coming out of it.
   const focusDim = el('div.focus-dim');
   const portrait = createPortrait(null);
 
@@ -77,7 +75,7 @@ export function createGameScene(app) {
   const speech = el('div.speech', {}, [speechName, speechText]);
 
   const skipBtn = el('button.skip-btn', { type: 'button' }, ['Skip story ▸▸']);
-  const stage = el('div.stage', {}, [angel.el, focusDim, portrait.el, speech, skipBtn]);
+  const stage = el('div.stage', {}, [focusDim, portrait.el, speech, skipBtn]);
 
   // ── Dialog box (narrator + choices) ──────────────────────────────────────
   const nameplate = el('div.nameplate');
@@ -409,7 +407,6 @@ export function createGameScene(app) {
         text: (letter === 'A' ? s.A : s.B).text,
       });
       pick(letter);
-      angel.speak(G.al, G.am);
       await renderPhase('forward');
     });
   }
@@ -425,7 +422,6 @@ export function createGameScene(app) {
       });
       pill.update(G.score);
       dots.setCurrent(G.idx);
-      angel.speak(G.al, G.am);
       await renderPhase('forward');
     });
   }
@@ -436,7 +432,6 @@ export function createGameScene(app) {
       reflectInput = null;
       replayThis();
       pill.update(G.score);
-      angel.speak(G.al, G.am);
       portrait.show(null); // the intro story repaints its own illustrations
       await renderPhase('back');
     });
@@ -464,7 +459,6 @@ export function createGameScene(app) {
       applyMomentChrome();
       portrait.show(null);
       dots.setCurrent(G.idx);
-      angel.speak(G.al, G.am);
       // Swap the previous moment's leftover outcome content out of
       // contentArea BEFORE the title card shows (not after) - otherwise it
       // sits there, dimly visible behind the card, for as long as the card is

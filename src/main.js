@@ -12,6 +12,7 @@
 import { TIMING } from './data/config.js';
 import { swapScene } from './engine/transitions.js';
 import { createBackground } from './components/background.js';
+import { createMusicWidget } from './components/musicWidget.js';
 import { createTitleScene } from './scenes/titleScene.js';
 import { createFormScene } from './scenes/formScene.js';
 import { createGameScene } from './scenes/gameScene.js';
@@ -35,9 +36,15 @@ function applyTimingVars() {
 function boot() {
   applyTimingVars();
 
+  const appHost = document.getElementById('app');
   const bgHost = document.getElementById('bg');
   const sceneRoot = document.getElementById('scene-root');
   const background = createBackground(bgHost);
+
+  // Mounted directly on #app (a sibling of #bg/#scene-root, not inside any
+  // scene), so it survives every screen change and always renders above the
+  // darkened/blurred backgrounds and every scene's own UI.
+  appHost.appendChild(createMusicWidget().el);
 
   let current = null;
 

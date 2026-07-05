@@ -13,12 +13,17 @@
  */
 
 const IMG = './assets/images/';
+const SND = './assets/sounds/';
 
 export const ASSETS = {
   angel: IMG + 'good angel/angel good (1).svg',
   logo: IMG + 'good angel/angel good (1).svg',
   // "Game Goodness" brand lockup, shown in the title + final footer.
   brand: IMG + 'game goodness logo.png',
+  sounds: {
+    // Looping background music (see engine/music.js + components/musicWidget.js).
+    bg: SND + 'bg-music.mp3',
+  },
   backgrounds: {
     // Scenario backgrounds 1-6 map to moments 1-6 (see each moment's `image`
     // in scenarios.js). backgrounds/7.png is reserved for the upcoming

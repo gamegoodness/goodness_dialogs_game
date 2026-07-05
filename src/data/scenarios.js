@@ -309,7 +309,7 @@ export const EPISODE_1 = [
         sit: 'Sam puts down the pencil and goes quiet. The teacher comes over and asks what happened.',
         story: [
           { who: 'milo', text: "You're doing it wrong. Let me just do it.", img: '5/milo_say_stay_back_to_sam.png' },
-          { who: null, text: 'Sam puts down the pencil and goes very quiet.', img: '5/milo_sad_project.png' },
+          { who: null, text: 'Sam puts down the pencil and goes very quiet.', img: '5/sam put down the pencil and walk away.png' },
           { who: 'teacher', text: 'Is everything alright over here?', img: '5/teacher_comes_and_ask_is_everything_okey.png' },
           { who: null, text: 'The teacher looks at them both, waiting.' },
         ],
@@ -333,7 +333,7 @@ export const EPISODE_1 = [
     sit: 'Milo is playing a board game with others and keeps losing, three times now. One player laughs each time. The frustration is building and Milo wants to quit.',
     intro: [
       { who: null, text: 'Game night. Milo is playing a board game with friends, and he has lost three times in a row.' },
-      { who: null, text: 'One player laughs loudly every time Milo loses.' },
+      { who: null, text: 'One player laughs loudly every time Milo loses.', img: '6/one player laughing.png' },
       { who: 'milo', text: "I keep losing... I don't want to play anymore.", img: '6/milo_looks_sad.png' },
       { who: null, text: 'The frustration is building. Milo wants to quit.' },
     ],
@@ -343,7 +343,7 @@ export const EPISODE_1 = [
       L2: {
         sit: 'Milo loses again. The same player laughs again.',
         story: [
-          { who: null, text: 'Milo takes a deep breath and plays another round. He loses again.' },
+          { who: null, text: 'Milo takes a deep breath and plays another round. He loses again.', img: '6/take a deep breath and keep playing.png' },
           { who: null, text: 'And the same player laughs. Again.' },
         ],
         am: 'proud', al: 'What Milo does now is the real win...',
@@ -362,7 +362,7 @@ export const EPISODE_1 = [
       L2: {
         sit: 'The pieces scatter. Everyone looks at Milo. There is an awkward silence.',
         story: [
-          { who: null, text: 'Milo shoves the board. The pieces scatter across the table.', img: '6/angry_milo.png' },
+          { who: null, text: 'Milo shoves the board. The pieces scatter across the table.', img: '6/throwing the board and walking.png' },
           { who: null, text: 'Everyone goes quiet and looks at Milo. The silence feels heavy.' },
         ],
         am: 'gentle', al: 'These feelings are real. What now?',

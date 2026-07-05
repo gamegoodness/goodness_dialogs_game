@@ -559,6 +559,96 @@ select.finput option { color: #111; background: #fff; }
 .rbtn:active { transform: scale(.98); }
 .fnote { font-size: 12.5px; color: #aaa; margin-top: 6px; }
 
+/* ── Music widget (global, floats above everything, every screen) ───────── */
+.music-widget {
+  /* Sits below the in-game HUD's top-right score pill AND the "Skip story"
+     button (both also claim the top-right corner while a story plays)
+     instead of on top of either, on every screen. */
+  position: fixed; top: max(122px, calc(env(safe-area-inset-top) + 112px)); right: max(14px, env(safe-area-inset-right));
+  z-index: 999; /* above scene-card (9), dialog (6), focus-dim (3) - every screen, always */
+}
+.music-btn {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(8, 16, 13, 0.78); border: 2px solid var(--panel-border);
+  border-radius: 50%;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-1);
+  font-size: 19px;
+  transition: transform .14s var(--ease-out), box-shadow .14s var(--ease-out), border-color .14s;
+}
+.music-btn:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-2); }
+.music-btn.active { border-color: var(--accent); }
+.music-icon { filter: drop-shadow(0 1px 2px rgba(0,0,0,.4)); line-height: 1; }
+
+.music-panel {
+  position: absolute; top: calc(100% + 10px); right: 0;
+  width: 220px;
+  background: rgba(10, 18, 15, 0.94);
+  border: 2px solid var(--panel-border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  padding: 14px 16px;
+  opacity: 0; transform: translateY(-8px) scale(.97);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s var(--ease-out);
+}
+.music-panel.open { opacity: 1; transform: none; pointer-events: auto; }
+.music-title-row {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+.music-title {
+  font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--paper-soft);
+}
+.music-info-btn {
+  width: 20px; height: 20px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; border: 2px solid rgba(255,255,255,.3);
+  color: var(--paper-soft); font-size: 12px; font-weight: 800; font-style: italic;
+  font-family: Georgia, serif;
+  transition: border-color .14s, color .14s;
+}
+.music-info-btn:hover { border-color: var(--accent); color: var(--paper); }
+.music-credits {
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.14);
+  display: none;
+}
+.music-credits.open { display: block; }
+.music-credits-title {
+  font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 5px;
+}
+.music-credits-line { font-size: 12.5px; color: var(--paper-soft); line-height: 1.5; }
+.music-mute {
+  width: 100%; padding: 9px; margin-bottom: 12px;
+  background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.16);
+  border-radius: var(--r-sm); color: var(--paper);
+  font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  transition: background .14s, border-color .14s;
+}
+.music-mute:hover { background: rgba(255,255,255,.14); border-color: var(--accent); }
+.music-row { display: flex; align-items: center; gap: 10px; }
+.music-lbl { font-size: 12.5px; color: var(--paper-soft); white-space: nowrap; }
+.music-slider {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 2px; background: rgba(255,255,255,.2); outline: none;
+}
+.music-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+.music-slider::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; border: none;
+  background: var(--accent); cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+@media (max-width: 480px) {
+  .music-widget { top: max(112px, calc(env(safe-area-inset-top) + 102px)); right: 10px; }
+  .music-btn { width: 38px; height: 38px; font-size: 17px; }
+  .music-panel { width: min(200px, calc(100vw - 20px)); padding: 12px 14px; }
+}
+
 /* ── Wider screens: keep the dialog readable, not stretched ─────────────── */
 @media (min-width: 760px) {
   .dialog { margin-left: auto; margin-right: auto; width: min(860px, calc(100% - 28px)); }
