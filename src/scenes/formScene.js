@@ -74,14 +74,14 @@ export function createFormScene(app) {
   const scene = el('div.scene.form-screen', {}, [
     el('div.form-card', {}, [
       el('div.form-title', {}, ['Before we start… 👋']),
-      el('div.form-sub', {}, ['Tell the Good Angel a little about you.']),
-      field('Your name', nameIn),
-      field('Your age', ageIn),
+      el('div.form-sub', {}, ['Tell the Good Angel a little about yourself.']),
+      field("What's your name?", nameIn),
+      field('How old are you?', ageIn),
       field('Where are you from?', cityIn),
       field('Which country?', countrySel),
       err,
       goBtn,
-      el('div.form-note', {}, ['Your answers help your teacher see how you played.']),
+      el('div.form-note', {}, ['help your teacher see how you played']),
     ]),
   ]);
 

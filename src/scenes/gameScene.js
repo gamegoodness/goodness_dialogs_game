@@ -293,15 +293,6 @@ export function createGameScene(app) {
       if (s.ambig) {
         content.appendChild(el('div.anote', {}, ['⚠️ ' + (s.ambigNote || 'Both choices have real costs.')]));
       }
-      // Optional "what do YOU think?" box, captured on the choice click below.
-      const thoughtArea = el('textarea.thought-input', {
-        rows: 2, placeholder: 'Optional: what would you do, and why? Type it here…',
-      });
-      thoughtInput = thoughtArea;
-      content.appendChild(el('div.thoughtbox', {}, [
-        el('div.thought-q', {}, ['💭 What are you thinking?']),
-        thoughtArea,
-      ]));
       content.appendChild(el('div.eyebrow.choose', {}, ['What should Milo do?']));
       content.appendChild(choicesRow([
         createChoiceButton({ letter: 'A', text: s.A.text, color: s.tc, index: 0, onSelect: chooseC1 }),
@@ -348,30 +339,6 @@ export function createGameScene(app) {
 
     const children = [ocCard];
 
-    // Reflection box (kid-facing).
-    let reflectBox = null;
-    if (!G.reflectDone) {
-      const textarea = el('textarea.rinput', {
-        rows: 2, placeholder: 'Type your thoughts, or just think it through...',
-      });
-      reflectInput = textarea;
-      const skip = el('span.rskip', {}, ["Skip, I've thought about it"]);
-      skip.addEventListener('click', () => {
-        logEvent('reflection_skipped', { moment: s.id });
-        reflectInput = null;
-        skipReflect();
-        reflectBox.classList.add('rbox-collapse');
-        setTimeout(() => reflectBox.remove(), 320);
-      });
-      reflectBox = el('div.rbox.rbox-enter', {}, [
-        el('div.rq', {}, ['💬 Think about it']),
-        el('div.rsub', {}, [s.reflect]),
-        textarea,
-        skip,
-      ]);
-      children.push(reflectBox);
-    }
-
     // Action row: Try differently / Next.
     const nextLabel = isLastMoment() ? 'See my score →' : 'Next moment →';
     const tryBtn = el('button.gbtn', { type: 'button' }, ['↩ Try differently']);
@@ -406,20 +373,9 @@ export function createGameScene(app) {
 
   // ── Handlers (all guarded) ───────────────────────────────────────────────
 
-  // The outcome screen's reflection textarea + the choice screen's thought
-  // textarea, so we can log whatever the student typed before advancing.
-  let reflectInput = null;
-  let thoughtInput = null;
-
   function chooseC1(letter) {
     guard.run(async () => {
       const s = moment();
-      if (thoughtInput && thoughtInput.value.trim()) {
-        logEvent('thought', {
-          moment: s.id, title: s.title, text: thoughtInput.value.trim().slice(0, 500),
-        });
-      }
-      thoughtInput = null;
       logEvent('choice_1', {
         moment: s.id, title: s.title, choice: letter,
         text: (letter === 'A' ? s.A : s.B).text,
