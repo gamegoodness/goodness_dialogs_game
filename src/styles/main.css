@@ -459,6 +459,30 @@
 }
 .tnote { font-size: 14px; color: rgba(255,255,255,.55); margin-top: 16px; }
 
+/* ── Brand footer (Game Goodness lockup: title + final) ─────────────────── */
+.brand-footer {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  text-align: center;
+}
+.brand-logo {
+  width: clamp(140px, 44vw, 188px); height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+  opacity: .97;
+}
+.brand-note {
+  font-size: 12.5px; font-weight: 700; letter-spacing: .05em;
+  color: rgba(255, 255, 255, .62);
+}
+/* Title: pin the lockup to the bottom of the screen, clear of the content. */
+.title-screen { position: relative; }
+.brand-footer-fixed {
+  position: absolute; left: 0; right: 0;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+/* Final: the lockup closes out the results, sitting under the card. */
+.final-inner .brand-footer { margin-top: 22px; margin-bottom: 4px; }
+
 /* ── Student form (between title and game) ─────────────────────────────── */
 .form-screen {
   display: flex; align-items: center; justify-content: center;

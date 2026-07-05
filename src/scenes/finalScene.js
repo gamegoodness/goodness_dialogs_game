@@ -14,6 +14,7 @@ import { createVirtueRow } from '../components/virtueChip.js';
 import { ASSETS } from '../data/config.js';
 import { sfx } from '../engine/audio.js';
 import { guard } from '../engine/transitions.js';
+import { createBrandFooter } from '../components/brandFooter.js';
 import { G, uniqueVirtues } from '../engine/state.js';
 
 function tier(score) {
@@ -61,6 +62,7 @@ export function createFinalScene(app) {
     el('div.final-inner', {}, [
       el('div.final-head', {}, [el('div.ep', {}, [`Episode ${ep.id} complete`])]),
       fcard,
+      createBrandFooter(),
     ]),
   ]);
 

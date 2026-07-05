@@ -17,6 +17,8 @@ const IMG = './assets/images/';
 export const ASSETS = {
   angel: IMG + 'good angel/angel good (1).svg',
   logo: IMG + 'good angel/angel good (1).svg',
+  // "Game Goodness" brand lockup, shown in the title + final footer.
+  brand: IMG + 'game goodness logo.png',
   backgrounds: {
     // Scenario backgrounds 1-6 map to moments 1-6 (see each moment's `image`
     // in scenarios.js). backgrounds/7.png is reserved for the upcoming

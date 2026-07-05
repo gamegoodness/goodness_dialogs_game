@@ -11,6 +11,7 @@ import { ASSETS } from '../data/config.js';
 import { ACTIVE_EPISODE } from '../data/episodes.js';
 import { sfx } from '../engine/audio.js';
 import { guard } from '../engine/transitions.js';
+import { createBrandFooter } from '../components/brandFooter.js';
 
 export function createTitleScene(app) {
   const ep = ACTIVE_EPISODE;
@@ -36,6 +37,7 @@ export function createTitleScene(app) {
       el('div.title-cta', {}, [startBtn]),
       note,
     ]),
+    createBrandFooter({ fixed: true }),
   ]);
 
   let tw;
