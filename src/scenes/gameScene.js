@@ -113,6 +113,35 @@ export function createGameScene(app) {
     );
   }
 
+  /** Hang the speech bubble just above the speaking character's head, so the
+   * words visibly come FROM the character (its tail points down at them). The
+   * bubble is anchored by its BOTTOM edge, so it can grow upward as the line
+   * types without ever drifting off the character. Falls back to the upper
+   * third of the stage when the beat has no illustration. */
+  function positionSpeech() {
+    if (!layer.classList.contains('charline')) return;
+    const stageRect = stage.getBoundingClientRect();
+    if (!stageRect.height) return;
+    const imgEl = portrait.el.querySelector('.portrait-img');
+    const imgRect = imgEl && imgEl.getBoundingClientRect();
+    const hasArt = imgRect && imgRect.height > 24
+      && !portrait.el.classList.contains('portrait-empty');
+    // Y (from the stage top) of the character's head.
+    const headY = hasArt ? (imgRect.top - stageRect.top) : stageRect.height * 0.34;
+    // Anchor the bubble by its BOTTOM edge, a small gap above the head, so it
+    // grows upward as the line types without drifting off the character.
+    let bottomPx = stageRect.height - headY + 14;
+    // Never let the bubble run off the top: if the head sits too high (short/
+    // landscape stages), drop the bubble so it overlaps the character's upper
+    // body instead of being clipped. `bubbleH` is the current rendered height.
+    const bubbleH = speech.offsetHeight || 160;
+    const maxBottom = stageRect.height - bubbleH - 8;
+    if (maxBottom > 44) bottomPx = Math.min(bottomPx, maxBottom);
+    bottomPx = Math.max(bottomPx, 44);
+    speech.style.top = 'auto';
+    speech.style.bottom = bottomPx + 'px';
+  }
+
   /** Focus mode on/off for one story beat (null beat = back to narrator).
    * Character: dim + blur everything, show the speech bubble with the
    * speaker's name (the bottom dialog box recedes), OK moves into the bubble.
@@ -128,12 +157,21 @@ export function createGameScene(app) {
       void speech.offsetWidth;
       speech.classList.add('speech-pop');
       speech.appendChild(okBtn);
+      // Anchor now, then again once the illustration has loaded/settled so the
+      // bubble ends up over the real character, not the fallback spot.
+      positionSpeech();
+      setTimeout(() => { if (alive) positionSpeech(); }, 140);
+      setTimeout(() => { if (alive) positionSpeech(); }, 480);
     } else {
       layer.classList.remove('focused', 'charline');
       setNameplate('📖', 'Story');
       dialog.appendChild(okBtn);
     }
   }
+
+  // Keep the bubble glued to the character if the viewport changes mid-line.
+  const onResize = () => positionSpeech();
+  window.addEventListener('resize', onResize);
 
   // ── Story sequencer ──────────────────────────────────────────────────────
   // Plays an array of beats into the stage + `body`, one at a time. Character
@@ -179,6 +217,8 @@ export function createGameScene(app) {
         }));
       });
       if (run.cancelled || !alive) break;
+      // Re-anchor now the bubble has its full height (it grew while typing).
+      if (beat.who) positionSpeech();
       // Wait for OK between beats (not after the last: choices take over).
       if (i < beats.length - 1) {
         await new Promise((res) => {
@@ -463,6 +503,7 @@ export function createGameScene(app) {
     },
     destroy() {
       alive = false;
+      window.removeEventListener('resize', onResize);
       if (activeRun) activeRun.skip();
       typers.forEach((t) => t && t.cancel && t.cancel());
     },

@@ -149,8 +149,8 @@
    character always stands in the middle of the screen. */
 .portrait {
   z-index: 4; /* above the focus dim: the scene art stays sharp */
-  position: absolute; left: 0; right: 0; bottom: -2%;
-  height: min(100%, 760px);
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: min(100%, 900px);
   display: flex; align-items: flex-end; justify-content: center;
   pointer-events: none;
   filter: drop-shadow(0 12px 24px rgba(0,0,0,0.45));
@@ -167,7 +167,7 @@
 .portrait-img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
 
 @media (max-width: 620px) {
-  .portrait { height: min(86%, 520px); opacity: .96; }
+  .portrait { height: min(94%, 640px); opacity: .98; }
   .portrait.portrait-empty { opacity: 0; }
 }
 
@@ -176,7 +176,9 @@
    them with a tail pointing DOWN at their head, comic-book style. */
 .speech {
   position: absolute; z-index: 5;
-  left: 50%; top: 58px;
+  /* `bottom` is set per-beat from JS (positionSpeech) so the bubble hangs just
+     above the speaking character's head; this is only the pre-JS fallback. */
+  left: 50%; bottom: 40%;
   width: min(560px, calc(100% - 32px));
   background: rgba(9, 17, 14, 0.96);
   border: 2px solid var(--tc, var(--accent));
@@ -218,7 +220,7 @@
 
 /* Mobile: same centered layout, just tighter and clear of the skip button. */
 @media (max-width: 620px) {
-  .speech { top: 128px; width: calc(100% - 24px); padding: 18px 16px 56px; }
+  .speech { width: calc(100% - 24px); padding: 18px 16px 56px; }
   .speech-text { font-size: 18px; }
 }
 
