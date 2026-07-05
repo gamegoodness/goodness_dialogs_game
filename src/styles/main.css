@@ -307,7 +307,9 @@
 .vn.storying .skip-btn { display: inline-flex; }
 .skip-btn:hover { color: #fff; border-color: rgba(255,255,255,.5); }
 @media (max-width: 620px) {
-  .skip-btn { top: 86px; }
+  /* Pushed down further than desktop so it clears the music button, which
+     also moves to its own mobile spot below the HUD (see .music-widget). */
+  .skip-btn { top: 118px; }
 }
 
 /* Reserve room for the OK button while the story is playing. */
@@ -643,8 +645,10 @@ select.finput option { color: #111; background: #fff; }
   width: 16px; height: 16px; border-radius: 50%; border: none;
   background: var(--accent); cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
-@media (max-width: 480px) {
-  .music-widget { top: max(112px, calc(env(safe-area-inset-top) + 102px)); right: 10px; }
+@media (max-width: 620px) {
+  /* Same breakpoint as .skip-btn's mobile shift, with enough gap between
+     them so the two never sit edge-to-edge (they did before this fix). */
+  .music-widget { top: max(70px, calc(env(safe-area-inset-top) + 60px)); right: 10px; }
   .music-btn { width: 38px; height: 38px; font-size: 17px; }
   .music-panel { width: min(200px, calc(100vw - 20px)); padding: 12px 14px; }
 }
