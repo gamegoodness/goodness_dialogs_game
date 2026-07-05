@@ -36,7 +36,7 @@
   opacity: 0.95;
   /* Darker than the raw art, so every scenario sits at the same brightness
      instead of each PNG's own exposure. */
-  filter: brightness(0.88) contrast(1.04);
+  filter: brightness(0.95) contrast(1.04);
 }
 .bg-layer::after {
   content: "";
