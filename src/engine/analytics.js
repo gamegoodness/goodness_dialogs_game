@@ -52,7 +52,11 @@ async function insertRow(table, row, prefer) {
     },
     body: JSON.stringify(row),
   });
-  if (!res.ok) throw new Error(`Supabase insert into ${table} failed (${res.status})`);
+  // 409 = the row already exists (a returning child keeps the same id). That's
+  // a successful no-op for us, not an error, so don't treat it as a failure.
+  if (!res.ok && res.status !== 409) {
+    throw new Error(`Supabase insert into ${table} failed (${res.status})`);
+  }
 }
 
 function readStored() {
@@ -71,8 +75,13 @@ export function startSession() {
 }
 
 /**
- * Save the form answers. Same child (identical answers) keeps their stored
- * id; the insert uses ignore-duplicates so replays never create copies.
+ * Save the form answers. Same child (identical answers) keeps their stored id,
+ * so a replay re-inserts the same row: the database returns 409 (duplicate key)
+ * and insertRow treats that as a successful no-op. We deliberately do NOT use
+ * PostgREST's `resolution=ignore-duplicates` upsert here - that turns the
+ * INSERT into an upsert that also needs a SELECT permission the public anon key
+ * doesn't have, so it was being rejected by row-level security (42501) and no
+ * student row ever saved.
  */
 export function saveStudent(profile) {
   const stored = readStored();
@@ -86,8 +95,7 @@ export function saveStudent(profile) {
 
   if (!configured()) return;
   queue = queue
-    .then(() => insertRow('students', { id, ...profile },
-      'resolution=ignore-duplicates,return=minimal'))
+    .then(() => insertRow('students', { id, ...profile }, 'return=minimal'))
     .catch((e) => console.warn('[analytics] student not saved:', e.message));
 }
 
