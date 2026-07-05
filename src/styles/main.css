@@ -36,7 +36,7 @@
   opacity: 0.95;
   /* Darker than the raw art, so every scenario sits at the same brightness
      instead of each PNG's own exposure. */
-  filter: brightness(0.95) contrast(1.04);
+  filter: brightness(0.4) contrast(1.05);
 }
 .bg-layer::after {
   content: "";
@@ -48,7 +48,7 @@
        darker, applied evenly (a flat overlay reads as a colour grade -
        predictably "bluer" - where hue-rotate would shift skin/wood/green
        tones unpredictably). */
-    linear-gradient(rgba(14, 28, 58, 0.48), rgba(14, 28, 58, 0.48));
+    linear-gradient(rgba(14, 28, 58, 0.72), rgba(14, 28, 58, 0.72));
 }
 
 /* Slow parallax drift for life. */
@@ -139,7 +139,12 @@
    (Blur/darkness are transitioned directly; transitioning `opacity` on a
    backdrop-filter element leaves the blur visible in some browsers.) */
 .focus-dim {
-  position: absolute; left: 0; right: 0; top: -140px; bottom: -30px;
+  /* bottom overshoots on purpose, all the way past the dialog box: while a
+     character talks the dialog fades to near-invisible (see .vn.charline
+     .dialog below), and without this the strip behind it stayed at normal
+     brightness instead of dimming with the rest of the stage. #app clips the
+     overshoot so this never shows past the real screen edge. */
+  position: absolute; left: 0; right: 0; top: -140px; bottom: -100vh;
   z-index: 3; pointer-events: none;
   background: rgba(3, 9, 7, 0);
   backdrop-filter: blur(0px);
