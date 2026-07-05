@@ -34,13 +34,21 @@
   background-size: cover;
   background-position: center;
   opacity: 0.95;
+  /* Darker than the raw art, so every scenario sits at the same brightness
+     instead of each PNG's own exposure. */
+  filter: brightness(0.88) contrast(1.04);
 }
 .bg-layer::after {
   content: "";
   position: absolute; inset: 0;
   background:
     linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 22%),
-    linear-gradient(0deg, rgba(6,12,10,0.86) 0%, rgba(6,12,10,0.35) 34%, rgba(6,12,10,0) 60%);
+    linear-gradient(0deg, rgba(6,12,10,0.86) 0%, rgba(6,12,10,0.35) 34%, rgba(6,12,10,0) 60%),
+    /* Flat cool-blue wash over the whole scene: a little bluer + a little
+       darker, applied evenly (a flat overlay reads as a colour grade -
+       predictably "bluer" - where hue-rotate would shift skin/wood/green
+       tones unpredictably). */
+    linear-gradient(rgba(14, 28, 58, 0.48), rgba(14, 28, 58, 0.48));
 }
 
 /* Slow parallax drift for life. */
@@ -410,6 +418,8 @@
 .rinput:focus { outline: 2px solid #9FE1CB; border-color: transparent; }
 .rskip { font-size: 14px; color: #888; cursor: pointer; text-decoration: underline; margin-top: 8px; display: inline-block; }
 .rskip:hover { color: #555; }
+/* Shown under the reflection field until the player writes something. */
+.rreq { font-size: 13px; font-weight: 700; color: #B26A00; margin-top: 9px; }
 
 /* ── Action row ────────────────────────────────────────────────────────── */
 .rowbtns { display: flex; gap: 10px; margin-top: 16px; }
@@ -429,6 +439,9 @@
 }
 .nbtn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 rgba(0,0,0,.4); }
 .nbtn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+/* Disabled until the reflection is written (required to advance). */
+.nbtn:disabled { opacity: .5; cursor: not-allowed; box-shadow: var(--shadow-2); transform: none; }
+.nbtn:disabled:hover { transform: none; box-shadow: var(--shadow-2); }
 
 /* Tap-to-continue hint (shown while narration types / waits) */
 .tap-hint {

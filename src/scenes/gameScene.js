@@ -37,7 +37,7 @@ import { CHARACTER_NAMES } from '../data/scenarios.js';
 import { logEvent } from '../engine/analytics.js';
 import {
   G, moment, branch, outcome, total, isLastMoment,
-  pick, pick2, goNext, replayThis, skipReflect,
+  pick, pick2, goNext, replayThis,
 } from '../engine/state.js';
 
 export function createGameScene(app) {
@@ -339,10 +339,33 @@ export function createGameScene(app) {
 
     const children = [ocCard];
 
-    // Action row: Try differently / Next.
+    // Required reflection: the player must write what they think of this
+    // scenario before they can move on. `reflectInput` is read in onNext.
+    const reflectArea = el('textarea.rinput', {
+      rows: 3, placeholder: 'Type what you think about this scenario…',
+    });
+    reflectInput = reflectArea;
+    const reflectReq = el('div.rreq', {}, ['Please write a thought to continue.']);
+    const reflectBox = el('div.rbox.rbox-enter', {}, [
+      el('div.rq', {}, ['💬 What do you think about this scenario?']),
+      el('div.rsub', {}, [s.reflect]),
+      reflectArea,
+      reflectReq,
+    ]);
+    children.push(reflectBox);
+
+    // Action row: Try differently / Next. Next stays disabled (and the hint
+    // shows) until the reflection has some text.
     const nextLabel = isLastMoment() ? 'See my score →' : 'Next moment →';
     const tryBtn = el('button.gbtn', { type: 'button' }, ['↩ Try differently']);
     const nextBtn = el('button.nbtn', { type: 'button', style: { color: oc.col } }, [nextLabel]);
+    const updateGate = () => {
+      const ok = !!reflectArea.value.trim();
+      nextBtn.disabled = !ok;
+      reflectReq.style.display = ok ? 'none' : '';
+    };
+    reflectArea.addEventListener('input', updateGate);
+    updateGate();
     tryBtn.addEventListener('click', onTryDifferently);
     nextBtn.addEventListener('click', onNext);
     children.push(el('div.rowbtns', {}, [tryBtn, nextBtn]));
@@ -372,6 +395,11 @@ export function createGameScene(app) {
   }
 
   // ── Handlers (all guarded) ───────────────────────────────────────────────
+
+  // The outcome screen's REQUIRED "what did you think of this scenario?"
+  // textarea. The player must write something here before Next is enabled, so
+  // we always have their thought to log.
+  let reflectInput = null;
 
   function chooseC1(letter) {
     guard.run(async () => {
@@ -406,7 +434,6 @@ export function createGameScene(app) {
     guard.run(async () => {
       logEvent('try_differently', { moment: moment().id, score_undone: outcome().s });
       reflectInput = null;
-      thoughtInput = null;
       replayThis();
       pill.update(G.score);
       angel.speak(G.al, G.am);
