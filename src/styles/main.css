@@ -318,6 +318,15 @@
 
 .content-area { position: relative; display: flex; min-height: 0; }
 .phase { display: flex; flex-direction: column; width: 100%; min-height: 0; }
+/* During a swap the outgoing phase is pulled OUT of flow (overlaid, fading on
+   its own layer) so it never sits beside the incoming phase in the flex row -
+   otherwise the two scenarios squash together and the old story's text stays
+   visible next to the new one. */
+.content-area > .phase.scene-out-forward,
+.content-area > .phase.scene-out-back,
+.content-area > .phase.scene-out-fade {
+  position: absolute; inset: 0; pointer-events: none;
+}
 
 /* Narration / dialogue text */
 .ctext {
