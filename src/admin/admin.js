@@ -195,24 +195,36 @@ function renderChoices() {
 }
 
 function renderReflections() {
-  const written = events
-    .filter((e) => e.event_type === 'thought' || e.event_type === 'reflection')
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const written = events.filter((e) => e.event_type === 'thought' || e.event_type === 'reflection');
   if (!written.length) {
     $('reflections').innerHTML = '<div class="quiet">No written thoughts or reflections yet.</div>';
     return;
   }
-  const rows = written.map((e) => {
-    const s = byId.get(e.student_id);
-    const kind = e.event_type === 'thought'
-      ? '<span class="pill">Thought</span>'
-      : '<span class="pill" style="background:rgba(255,205,90,.15);color:#FFE39A">Reflection</span>';
-    return `<tr><td>${esc(s ? s.name : '-')}</td><td>${kind}</td><td>${esc(e.data.moment)}</td>
-      <td>${esc(e.data.text)}</td>
-      <td class="muted">${new Date(e.created_at).toLocaleString()}</td></tr>`;
+  // One row per student; their writing stays hidden until the name is hovered,
+  // then shows grouped by story. (The CSV export keeps the full flat list.)
+  const byStu = new Map(); // student_id -> written events
+  written.forEach((e) => {
+    const key = e.student_id || 'unknown';
+    if (!byStu.has(key)) byStu.set(key, []);
+    byStu.get(key).push(e);
+  });
+  const rows = [...byStu.entries()].map(([sid, list]) => {
+    const s = byId.get(sid);
+    // Group each student's writing by story number, newest device order.
+    const byMoment = new Map();
+    list.forEach((e) => {
+      const m = e.data.moment != null ? Number(e.data.moment) : 0;
+      if (!byMoment.has(m)) byMoment.set(m, []);
+      byMoment.get(m).push(e.data.text);
+    });
+    const pop = [...byMoment.entries()].sort((a, b) => a[0] - b[0]).map(([m, texts]) =>
+      `<div class="rf-item"><span class="rf-m">${m ? `Story ${esc(m)}` : 'Story —'}</span>
+        <div class="rf-txts">${texts.map((t) => `<div>“${esc(t)}”</div>`).join('')}</div></div>`,
+    ).join('');
+    return `<tr><td><span class="rf-name" tabindex="0">${esc(s ? s.name : 'Unknown')}<div class="rf-pop">${pop}</div></span></td></tr>`;
   }).join('');
   $('reflections').innerHTML = `<table>
-    <thead><tr><th>Student</th><th>Type</th><th>Moment</th><th>What they wrote</th><th>When</th></tr></thead>
+    <thead><tr><th>Student — hover a name to see their thoughts per story</th></tr></thead>
     <tbody>${rows}</tbody></table>`;
 }
 

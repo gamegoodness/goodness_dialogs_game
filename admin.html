@@ -70,6 +70,19 @@
     .ev time { flex: 0 0 62px; color: rgba(255,255,255,.45); font-size: 12px; padding-top: 2px; }
     .quiet { color: rgba(255,255,255,.5); font-size: 14px; padding: 12px 0; }
     .muted { color: rgba(255,255,255,.45); }
+    /* reflections: name only, thoughts revealed on hover */
+    .rf-name { position: relative; cursor: pointer; font-weight: 600;
+               border-bottom: 1px dotted rgba(124,224,188,.6); }
+    .rf-pop { display: none; position: absolute; left: 0; top: calc(100% + 6px);
+              z-index: 20; min-width: 320px; max-width: 460px;
+              background: #12241d; border: 1px solid rgba(124,224,188,.35);
+              border-radius: 10px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+    .rf-name:hover .rf-pop, .rf-name:focus .rf-pop { display: block; }
+    .rf-item { padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,.1); }
+    .rf-item:last-child { border-bottom: none; }
+    .rf-m { display: block; font-size: 11px; text-transform: uppercase;
+            letter-spacing: .07em; color: #7CE0BC; margin-bottom: 3px; }
+    .rf-txts div { font-size: 14px; color: #eef5f1; line-height: 1.45; margin: 2px 0; }
   </style>
 </head>
 <body>
@@ -117,8 +130,8 @@
       <div class="panel tbl-wrap" id="choices"></div>
 
       <h2>Thoughts &amp; reflections</h2>
-      <div class="sub" style="margin-bottom:8px">What students wrote - during a scenario (thought) and after it (reflection).</div>
-      <div class="panel tbl-wrap" id="reflections"></div>
+      <div class="sub" style="margin-bottom:8px">Hover a student's name to see what they wrote for each story. Download the CSV for the full list.</div>
+      <div class="panel" id="reflections"></div>
     </div>
 
   </div>
