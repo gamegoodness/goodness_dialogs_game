@@ -570,6 +570,19 @@ select.finput option { color: #111; background: #fff; }
 .rbtn:active { transform: scale(.98); }
 .fnote { font-size: 12.5px; color: #aaa; margin-top: 6px; }
 
+/* ── End-screen report: the kid's choices + thoughts, per moment ─────────── */
+.jbox { background: #F7FBFF; border: 1px solid #C7DEF3; border-radius: var(--r-md); padding: 15px 17px; margin-bottom: 12px; text-align: left; }
+.jentry { padding: 10px 0; border-bottom: 1px solid #E4EEF8; }
+.jentry:last-child { border-bottom: 0; padding-bottom: 2px; }
+.jhead { font-size: 14px; font-weight: 800; color: #14406e; margin-bottom: 4px; }
+.jchoice { font-size: 13.5px; color: #1c3d5a; line-height: 1.5; }
+.jvirt { font-size: 13px; color: #185FA5; margin: 2px 0; }
+.jthought { font-size: 13.5px; color: #37474f; line-height: 1.5; margin-top: 3px; }
+.jthought b { color: #14406e; }
+.dlbtn { width: 100%; border-radius: var(--r-md); padding: 13px; font-size: 15px; font-weight: 800; color: #14406e; background: #E6F1FB; border: 1px solid #9FC4E8; transition: transform .15s; margin-bottom: 16px; }
+.dlbtn:hover { transform: translateY(-2px); }
+.dlbtn:active { transform: scale(.98); }
+
 /* ── Music widget (global, floats above everything, every screen) ───────── */
 .music-widget {
   /* Sits below the in-game HUD's top-right score pill AND the "Skip story"

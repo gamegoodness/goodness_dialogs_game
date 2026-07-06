@@ -36,7 +36,7 @@ import { CHARACTER_NAMES } from '../data/scenarios.js';
 import { logEvent } from '../engine/analytics.js';
 import {
   G, moment, branch, outcome, total, isLastMoment,
-  pick, pick2, goNext, replayThis,
+  pick, pick2, goNext, replayThis, recordJournalEntry,
 } from '../engine/state.js';
 
 export function createGameScene(app) {
@@ -440,11 +440,12 @@ export function createGameScene(app) {
   function onNext() {
     guard.run(async () => {
       sfx.advance();
-      if (reflectInput && reflectInput.value.trim()) {
-        logEvent('reflection', {
-          moment: moment().id, text: reflectInput.value.trim().slice(0, 500),
-        });
+      const thought = reflectInput ? reflectInput.value.trim() : '';
+      if (thought) {
+        logEvent('reflection', { moment: moment().id, text: thought.slice(0, 500) });
       }
+      // Keep a per-moment record (choices + thought) for the end-screen report.
+      recordJournalEntry(thought);
       reflectInput = null;
       const wasLast = isLastMoment();
       if (wasLast) {

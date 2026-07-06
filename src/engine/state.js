@@ -22,6 +22,7 @@ export const G = {
   path2: null,       // 'A2' | 'B2' - second choice
   score: 0,
   virtues: [],
+  journal: [],       // one entry per completed moment (choices + the kid's thought)
   am: 'neutral',     // angel mood key
   al: "I'm watching over Milo today.", // angel line
   reflectDone: false,
@@ -56,7 +57,7 @@ export function startGame() {
   const first = moments()[0];
   Object.assign(G, {
     screen: 'game', idx: 0, phase: 'c1', path: null, path2: null,
-    score: 0, virtues: [], am: first.am, al: first.al, reflectDone: false,
+    score: 0, virtues: [], journal: [], am: first.am, al: first.al, reflectDone: false,
   });
 }
 
@@ -118,8 +119,30 @@ export function goNext() {
 export function replayGame() {
   Object.assign(G, {
     screen: 'title', idx: 0, phase: 'c1', path: null, path2: null,
-    score: 0, virtues: [], am: 'neutral',
+    score: 0, virtues: [], journal: [], am: 'neutral',
     al: "I'm watching over Milo today.", reflectDone: false,
+  });
+}
+
+/**
+ * Record the just-finished moment for the end-of-episode report: what the kid
+ * chose (both choices + the outcome/virtue) and the thought they wrote. Called
+ * from onNext, before goNext advances. `thought` is the reflection text.
+ */
+export function recordJournalEntry(thought) {
+  const s = moment();
+  const c1 = G.path === 'A' ? s.A : s.B;
+  const o = outcome();
+  G.journal.push({
+    id: s.id,
+    title: s.title,
+    tag: s.tag,
+    choice1: c1.text,
+    choice2: o.text,
+    outcome: o.oc.title,
+    virtue: o.oc.virt,
+    positive: o.s > 0,
+    thought: (thought || '').trim(),
   });
 }
 
