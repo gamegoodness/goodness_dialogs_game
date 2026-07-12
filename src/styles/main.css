@@ -316,12 +316,17 @@
 .dialog-inner { transition: padding-bottom .3s ease; }
 .vn.storying .dialog-inner { padding-bottom: 68px; }
 
-.content-area { position: relative; display: flex; min-height: 0; }
+/* Phases are STACKED, never placed side by side. A single-cell grid makes every
+   .phase occupy the same cell (1/1), so if two phases ever coexist during a swap
+   they overlap (one fading out over the other) instead of squashing into a flex
+   row - which is what made two scenarios' stories merge together in the middle.
+   This is the structural guarantee; the absolute rule below is belt-and-suspenders. */
+.content-area { position: relative; display: grid; min-height: 0; }
+.content-area > .phase { grid-area: 1 / 1; }
 .phase { display: flex; flex-direction: column; width: 100%; min-height: 0; }
-/* During a swap the outgoing phase is pulled OUT of flow (overlaid, fading on
-   its own layer) so it never sits beside the incoming phase in the flex row -
-   otherwise the two scenarios squash together and the old story's text stays
-   visible next to the new one. */
+/* During a swap the outgoing phase is also pulled OUT of flow (overlaid, fading
+   on its own layer) so it never adds to the container's height while the new
+   phase is already in - the incoming scenario alone drives the box size. */
 .content-area > .phase.scene-out-forward,
 .content-area > .phase.scene-out-back,
 .content-area > .phase.scene-out-fade {
