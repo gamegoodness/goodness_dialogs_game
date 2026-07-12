@@ -316,20 +316,16 @@
 .dialog-inner { transition: padding-bottom .3s ease; }
 .vn.storying .dialog-inner { padding-bottom: 68px; }
 
-/* Phases are STACKED, never placed side by side. A single-cell grid makes every
-   .phase occupy the same cell (1/1), so if two phases ever coexist during a swap
-   they overlap (one fading out over the other) instead of squashing into a flex
-   row - which is what made two scenarios' stories merge together in the middle.
-   This is the structural guarantee; the absolute rule below is belt-and-suspenders. */
-.content-area { position: relative; display: grid; min-height: 0; }
-.content-area > .phase { grid-area: 1 / 1; }
+.content-area { position: relative; display: flex; min-height: 0; }
 .phase { display: flex; flex-direction: column; width: 100%; min-height: 0; }
-/* During a swap the outgoing phase is also pulled OUT of flow (overlaid, fading
-   on its own layer) so it never adds to the container's height while the new
-   phase is already in - the incoming scenario alone drives the box size. */
-.content-area > .phase.scene-out-forward,
-.content-area > .phase.scene-out-back,
-.content-area > .phase.scene-out-fade {
+/* The CURRENT scenario is always the LAST-appended phase; any earlier phase still
+   in the DOM (fading out, or a stray leftover from a fast/edge transition) is
+   pulled OUT of flow and overlaid, so two scenarios can NEVER sit side by side in
+   the flex row and squash/merge together. This keys off DOM order rather than a
+   transient animation class, so it holds no matter how the swap is timed - the
+   permanent fix. A lone phase is itself the last child, so this never applies to
+   the normal single-phase case and that layout is left exactly as-is (no jam). */
+.content-area > .phase:not(:last-child) {
   position: absolute; inset: 0; pointer-events: none;
 }
 

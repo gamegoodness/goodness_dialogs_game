@@ -458,6 +458,13 @@ export function createGameScene(app) {
       // the story plays.
       app.background.crossfadeTo({ gradient: moment().bg, image: bgImage(moment().image) });
       applyMomentChrome();
+      // Wipe the previous moment's stage chrome so nothing from it bleeds into
+      // the new scenario: clear the speech bubble text/speaker and reset the
+      // nameplate + focus classes (otherwise the old "What happened" nameplate
+      // and last speaker's line linger under the title card into the next story).
+      speechText.textContent = '';
+      speechName.textContent = '';
+      setFocus(null);
       portrait.show(null);
       dots.setCurrent(G.idx);
       // Swap the previous moment's leftover outcome content out of
