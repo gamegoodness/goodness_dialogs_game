@@ -48,7 +48,7 @@ export const ANGEL_FACES = {
 /** Display names for the speech-bubble nameplate, keyed by beat `who`. */
 export const CHARACTER_NAMES = {
   milo: 'Milo', priya: 'Priya', jai: 'Jai', sam: 'Sam',
-  mum: 'Mum', dad: 'Dad', teacher: 'Teacher',
+  mum: 'Mum', dad: 'Dad', teacher: 'Teacher', ravi: 'Ravi',
 };
 
 export const EPISODE_1 = [
@@ -377,5 +377,57 @@ export const EPISODE_1 = [
       },
     },
     reflect: 'Think of a time you felt really frustrated. What helped you calm down?',
+  },
+  {
+    id: 7, title: 'The trophy', tag: 'Humility', tc: '#3B6D11',
+    bg: 'linear-gradient(135deg,#97C459,#3B6D11)',
+    image: 'backgrounds/7.png', char: 'ravi',
+    sit: "The art teacher announces the winner of the poster competition. It's Milo. Milo's best friend Ravi worked on his poster every single day for two weeks and came second. Ravi's shoulders drop and he stares at the floor.",
+    intro: [
+      { who: null, text: 'Art class. The teacher stands at the front holding the poster competition results, and the whole class leans in.', img: '7/ravi.png' },
+      { who: 'teacher', text: "And the winner of this year's poster competition is... Milo!" },
+      { who: null, text: 'Milo\'s best friend Ravi worked on his poster every single day for two weeks. He came second.' },
+      { who: null, text: "Ravi's shoulders drop. He stares at the floor and says nothing." },
+    ],
+    am: 'watchful', al: 'Milo is about to find out what winning really means...', ambig: false,
+    A: {
+      text: 'Cheer loudly: "I knew I\'d win! I practised way more than everyone."',
+      L2: {
+        sit: "Ravi doesn't say a word. He walks to the back of the room and stands alone by the window.",
+        story: [
+          { who: 'milo', text: "I knew I'd win! I practised way more than everyone." },
+          { who: null, text: "Ravi doesn't say a word. He walks to the back of the room and stands alone by the window." },
+        ],
+        am: 'sad', al: 'Something here needs a second look...',
+        A2: {
+          text: 'Go over and explain you just tried harder than everyone else', s: -1,
+          oc: { icon: '😔', title: 'Ravi steps back further', col: '#993C1D', bg: '#FAECE7', txt: 'Ravi nods without looking up and moves further away. What Milo said was true, but true things can still land as unkind.', virt: 'Reflection on Pride' },
+        },
+        B2: {
+          text: 'Catch yourself, and go ask Ravi about his poster instead', s: 1,
+          oc: { icon: '💚', title: 'A repair worth making', col: '#3B6D11', bg: '#EAF3DE', txt: 'Ravi looks up, surprised. He says the sky took three tries to get right. For a minute, neither of them is thinking about who won.', virt: 'Humility' },
+        },
+      },
+    },
+    B: {
+      text: 'Go quietly and check on Ravi first',
+      L2: {
+        sit: "Ravi admits, quietly, that he worked so hard and still isn't sure his poster was any good.",
+        story: [
+          { who: null, text: 'Milo slips to the back of the room and sits down next to Ravi.' },
+          { who: 'ravi', text: "I worked so hard on it... I'm still not sure it was any good." },
+        ],
+        am: 'gentle', al: "There's more than one way to be kind here...",
+        A2: {
+          text: '"It was nothing, honestly. Anyone could have won."', s: 0,
+          oc: { icon: '💭', title: 'Kind, but not quite true', col: '#5F5E5A', bg: '#F1EFE8', txt: "Ravi says thanks, but doesn't look convinced. Brushing off the win doesn't make Ravi feel any better about his own poster.", virt: 'Reflection' },
+        },
+        B2: {
+          text: '"I worked hard for this and I\'m proud, and your poster genuinely stood out."', s: 2,
+          oc: { icon: '🌟', title: 'Both things can be true', col: '#3B6D11', bg: '#EAF3DE', txt: "Ravi's shoulders relax. Hearing that Milo is proud, and that his own work stood out, lands differently than either one alone. They end up comparing notes on how they each drew the clouds.", virt: 'Humility' },
+        },
+      },
+    },
+    reflect: "Is there a difference between being humble and pretending your effort didn't matter? What do you think real humility looks like?",
   },
 ];
