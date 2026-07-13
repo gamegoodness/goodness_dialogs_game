@@ -384,10 +384,10 @@ export const EPISODE_1 = [
     image: 'backgrounds/7.png', char: 'ravi',
     sit: "The art teacher announces the winner of the poster competition. It's Milo. Milo's best friend Ravi worked on his poster every single day for two weeks and came second. Ravi's shoulders drop and he stares at the floor.",
     intro: [
-      { who: null, text: 'Art class. The teacher stands at the front holding the poster competition results, and the whole class leans in.', img: '7/ravi.png' },
-      { who: 'teacher', text: "And the winner of this year's poster competition is... Milo!" },
-      { who: null, text: 'Milo\'s best friend Ravi worked on his poster every single day for two weeks. He came second.' },
-      { who: null, text: "Ravi's shoulders drop. He stares at the floor and says nothing." },
+      { who: null, text: 'Art class. The teacher stands at the front holding the poster competition results, and the whole class leans in.', img: '7/milo happy and ravi sad on the stage .png' },
+      { who: 'teacher', text: "And the winner of this year's poster competition is... Milo!", img: '7/milo_happy_with_the_certificate.png' },
+      { who: null, text: 'Milo\'s best friend Ravi worked on his poster every single day for two weeks. He came second.', img: '7/ravi_looking_sad_with_the_certificate.png' },
+      { who: null, text: "Ravi's shoulders drop. He stares at the floor and says nothing.", img: '7/ravi stares at the floor and says nothing.png' },
     ],
     am: 'watchful', al: 'Milo is about to find out what winning really means...', ambig: false,
     A: {
@@ -395,17 +395,17 @@ export const EPISODE_1 = [
       L2: {
         sit: "Ravi doesn't say a word. He walks to the back of the room and stands alone by the window.",
         story: [
-          { who: 'milo', text: "I knew I'd win! I practised way more than everyone." },
-          { who: null, text: "Ravi doesn't say a word. He walks to the back of the room and stands alone by the window." },
+          { who: 'milo', text: "I knew I'd win! I practised way more than everyone.", img: '7/milo_celibrating_alone_happily.png' },
+          { who: null, text: "Ravi doesn't say a word. He walks to the back of the room and stands alone by the window.", img: '7/ravi_sits_alone_in_a_table.png' },
         ],
         am: 'sad', al: 'Something here needs a second look...',
         A2: {
           text: 'Go over and explain you just tried harder than everyone else', s: -1,
-          oc: { icon: '😔', title: 'Ravi steps back further', col: '#993C1D', bg: '#FAECE7', txt: 'Ravi nods without looking up and moves further away. What Milo said was true, but true things can still land as unkind.', virt: 'Reflection on Pride' },
+          oc: { icon: '😔', title: 'Ravi steps back further', col: '#993C1D', bg: '#FAECE7', txt: 'Ravi nods without looking up and moves further away. What Milo said was true, but true things can still land as unkind.', virt: 'Reflection on Pride', img: '7/milo_talking_to_sad_ravi.png' },
         },
         B2: {
           text: 'Catch yourself, and go ask Ravi about his poster instead', s: 1,
-          oc: { icon: '💚', title: 'A repair worth making', col: '#3B6D11', bg: '#EAF3DE', txt: 'Ravi looks up, surprised. He says the sky took three tries to get right. For a minute, neither of them is thinking about who won.', virt: 'Humility' },
+          oc: { icon: '💚', title: 'A repair worth making', col: '#3B6D11', bg: '#EAF3DE', txt: 'Ravi looks up, surprised. He says the sky took three tries to get right. For a minute, neither of them is thinking about who won.', virt: 'Humility', img: '7/milo_talking_to_ravi_in_the_class_table.png' },
         },
       },
     },
@@ -414,17 +414,17 @@ export const EPISODE_1 = [
       L2: {
         sit: "Ravi admits, quietly, that he worked so hard and still isn't sure his poster was any good.",
         story: [
-          { who: null, text: 'Milo slips to the back of the room and sits down next to Ravi.' },
-          { who: 'ravi', text: "I worked so hard on it... I'm still not sure it was any good." },
+          { who: null, text: 'Milo slips to the back of the room and sits down next to Ravi.', img: '7/ravi_staring_at_the_floor_and_milo_comes_to_talk.png' },
+          { who: 'ravi', text: "I worked so hard on it... I'm still not sure it was any good.", img: '7/ravi_talking_to_milo.png' },
         ],
         am: 'gentle', al: "There's more than one way to be kind here...",
         A2: {
           text: '"It was nothing, honestly. Anyone could have won."', s: 0,
-          oc: { icon: '💭', title: 'Kind, but not quite true', col: '#5F5E5A', bg: '#F1EFE8', txt: "Ravi says thanks, but doesn't look convinced. Brushing off the win doesn't make Ravi feel any better about his own poster.", virt: 'Reflection' },
+          oc: { icon: '💭', title: 'Kind, but not quite true', col: '#5F5E5A', bg: '#F1EFE8', txt: "Ravi says thanks, but doesn't look convinced. Brushing off the win doesn't make Ravi feel any better about his own poster.", virt: 'Reflection', img: '7/milo smiling at the ravi in the class table.png' },
         },
         B2: {
           text: '"I worked hard for this and I\'m proud, and your poster genuinely stood out."', s: 2,
-          oc: { icon: '🌟', title: 'Both things can be true', col: '#3B6D11', bg: '#EAF3DE', txt: "Ravi's shoulders relax. Hearing that Milo is proud, and that his own work stood out, lands differently than either one alone. They end up comparing notes on how they each drew the clouds.", virt: 'Humility' },
+          oc: { icon: '🌟', title: 'Both things can be true', col: '#3B6D11', bg: '#EAF3DE', txt: "Ravi's shoulders relax. Hearing that Milo is proud, and that his own work stood out, lands differently than either one alone. They end up comparing notes on how they each drew the clouds.", virt: 'Humility', img: '7/milo and ravi both happily talking in the class tables.png' },
         },
       },
     },
