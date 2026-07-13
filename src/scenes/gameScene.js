@@ -171,6 +171,39 @@ export function createGameScene(app) {
   const onResize = () => positionSpeech();
   window.addEventListener('resize', onResize);
 
+  // ── Moment isolation (the permanent overlap fix) ─────────────────────────
+  // The whole scene (stage, speech bubble, illustration, contentArea) is built
+  // ONCE and reused for every moment, so each new story types into the SAME
+  // shared surfaces the previous one used. If any leftover survives the
+  // hand-off, it shows THROUGH the next story - that is the "content
+  // overlapping in the middle" bug. This one function is the SINGLE authority
+  // that wipes every shared surface clean at a moment boundary, so a new story
+  // always starts from an empty stage. Anything moment-scoped that can linger
+  // must be cleared HERE (not scattered), so the guarantee can't rot.
+  // See docs/CONTENT-OVERLAP.md for the full story.
+  function resetMomentStage() {
+    // 1. Stop everything still animating from the previous moment.
+    if (activeRun) activeRun.skip();
+    typers.forEach((t) => t && t.cancel && t.cancel());
+    typers.length = 0;
+    // 2. Empty the bottom dialog content area outright - no half-faded phase
+    //    from the last moment may coexist with the new story's phase.
+    contentArea.replaceChildren();
+    // 3. Wipe the shared STAGE (the middle): speech bubble text/speaker, its
+    //    pop animation and JS-set position, plus every focus/story state class.
+    speechText.textContent = '';
+    speechName.textContent = '';
+    speech.classList.remove('speech-pop');
+    speech.style.top = '';
+    speech.style.bottom = '';
+    layer.classList.remove('focused', 'charline', 'storying');
+    hideOk();
+    // 4. Back to narrator chrome + blank illustration (setFocus(null) returns
+    //    the OK button to the dialog and resets the nameplate).
+    setFocus(null);
+    portrait.show(null);
+  }
+
   // ── Story sequencer ──────────────────────────────────────────────────────
   // Plays an array of beats into the stage + `body`, one at a time. Character
   // beats type slowly into their speech bubble in focus mode; the OK button
@@ -453,26 +486,20 @@ export function createGameScene(app) {
       }
       goNext();
       if (wasLast) { await app.toFinal(); return; }
-      // New moment: crossfade background, clear the stage art, retitle,
-      // animate dots, then introduce the scenario with its title card before
-      // the story plays.
+      // New moment: crossfade background, retitle, animate dots, then
+      // introduce the scenario with its title card before the story plays.
       app.background.crossfadeTo({ gradient: moment().bg, image: bgImage(moment().image) });
       applyMomentChrome();
-      // Wipe the previous moment's stage chrome so nothing from it bleeds into
-      // the new scenario: clear the speech bubble text/speaker and reset the
-      // nameplate + focus classes (otherwise the old "What happened" nameplate
-      // and last speaker's line linger under the title card into the next story).
-      speechText.textContent = '';
-      speechName.textContent = '';
-      setFocus(null);
-      portrait.show(null);
+      // Hand the stage over to the new story from a guaranteed-clean slate:
+      // every shared surface the previous moment touched (bubble, art, focus
+      // state AND the leftover outcome content in contentArea) is wiped in one
+      // place, so nothing from the last scenario can bleed into this one.
+      resetMomentStage();
       dots.setCurrent(G.idx);
-      // Swap the previous moment's leftover outcome content out of
-      // contentArea BEFORE the title card shows (not after) - otherwise it
-      // sits there, dimly visible behind the card, for as long as the card is
-      // up. Building the new phase but holding its `_start()` (which is what
-      // kicks off the story typewriter) until the card is dismissed keeps
-      // each scenario fully separate from the one before it.
+      // Build the new phase and mount it into the now-empty contentArea, but
+      // HOLD its `_start()` (which kicks off the story typewriter) until the
+      // title card is dismissed - so each scenario stays fully separate from
+      // the one before it.
       const content = build(G.phase);
       await swapScene(contentArea, content, 'forward');
       await showSceneCard();
