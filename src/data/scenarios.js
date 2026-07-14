@@ -404,8 +404,21 @@ export const EPISODE_1 = [
           oc: { icon: '😔', title: 'Ravi steps back further', col: '#993C1D', bg: '#FAECE7', txt: 'Ravi nods without looking up and moves further away. What Milo said was true, but true things can still land as unkind.', virt: 'Reflection on Pride', img: '7/milo_talking_to_sad_ravi.png' },
         },
         B2: {
-          text: 'Catch yourself, and go ask Ravi about his poster instead', s: 1,
-          oc: { icon: '💚', title: 'A repair worth making', col: '#3B6D11', bg: '#EAF3DE', txt: 'Ravi looks up, surprised. He says the sky took three tries to get right. For a minute, neither of them is thinking about who won.', virt: 'Humility', img: '7/milo_talking_to_ravi_in_the_class_table.png' },
+          text: 'Catch yourself, and go ask Ravi about his poster instead',
+          L3: {
+            story: [
+              { who: null, text: 'For a moment neither of them is thinking about who won. Milo looks down at the medal still around his neck.', img: '7/milo_talking_to_ravi_in_the_class_table.png' },
+            ],
+            am: 'gentle', al: 'One more small choice could make this bigger...',
+            A3: {
+              text: 'Offer to share the trophy with Ravi', s: 2,
+              oc: { icon: '🏅', title: 'Sharing the win', col: '#3B6D11', bg: '#EAF3DE', txt: "Milo takes off the medal and holds it out. 'This should be both of ours — your sky took three tries, mine took five.' Ravi laughs and takes one side of the ribbon.", virt: 'Humility', img: '7/milo and ravi holding the trofy in the stage both happiky.png', reflect: 'Milo caught himself boasting, then chose to share the win too. Why might noticing your mistake and making it right matter more than not making it at all?' },
+            },
+            B3: {
+              text: 'Leave it as it is', s: 1,
+              oc: { icon: '💚', title: 'A repair worth making', col: '#3B6D11', bg: '#EAF3DE', txt: 'Ravi looks up, surprised. He says the sky took three tries to get right. For a minute, neither of them is thinking about who won.', virt: 'Humility', img: '7/milo_talking_to_ravi_in_the_class_table.png' },
+            },
+          },
         },
       },
     },
@@ -419,12 +432,38 @@ export const EPISODE_1 = [
         ],
         am: 'gentle', al: "There's more than one way to be kind here...",
         A2: {
-          text: '"It was nothing, honestly. Anyone could have won."', s: 0,
-          oc: { icon: '💭', title: 'Kind, but not quite true', col: '#5F5E5A', bg: '#F1EFE8', txt: "Ravi says thanks, but doesn't look convinced. Brushing off the win doesn't make Ravi feel any better about his own poster.", virt: 'Reflection', img: '7/milo smiling at the ravi in the class table.png' },
+          text: '"It was nothing, honestly. Anyone could have won."',
+          L3: {
+            story: [
+              { who: null, text: "Ravi still won't quite believe him. Milo looks down at the medal, then back at Ravi.", img: '7/milo smiling at the ravi in the class table.png' },
+            ],
+            am: 'gentle', al: 'Words alone did not land. What now?',
+            A3: {
+              text: 'Take off the medal and hold it out to Ravi', s: 2,
+              oc: { icon: '🏅', title: 'More than words', col: '#3B6D11', bg: '#EAF3DE', txt: "Milo unclips the medal and presses it into Ravi's hand. Ravi looks up properly for the first time. Some things land better as actions than as words.", virt: 'Humility', img: '7/milo and ravi holding the trofy in the stage both happiky.png', reflect: "Saying 'it was nothing' didn't convince Ravi, but sharing the trophy did. What's the difference between telling someone their effort matters and showing them?" },
+            },
+            B3: {
+              text: 'Leave it as it is', s: 0,
+              oc: { icon: '💭', title: 'Kind, but not quite true', col: '#5F5E5A', bg: '#F1EFE8', txt: "Ravi says thanks, but doesn't look convinced. Brushing off the win doesn't make Ravi feel any better about his own poster.", virt: 'Reflection', img: '7/milo smiling at the ravi in the class table.png' },
+            },
+          },
         },
         B2: {
-          text: '"I worked hard for this and I\'m proud, and your poster genuinely stood out."', s: 2,
-          oc: { icon: '🌟', title: 'Both things can be true', col: '#3B6D11', bg: '#EAF3DE', txt: "Ravi's shoulders relax. Hearing that Milo is proud, and that his own work stood out, lands differently than either one alone. They end up comparing notes on how they each drew the clouds.", virt: 'Humility', img: '7/milo and ravi both happily talking in the class tables.png' },
+          text: '"I worked hard for this and I\'m proud, and your poster genuinely stood out."',
+          L3: {
+            story: [
+              { who: null, text: "Ravi's shoulders relax. Milo looks down at the medal, then at his friend.", img: '7/milo and ravi both happily talking in the class tables.png' },
+            ],
+            am: 'happy', al: 'This is going well. Could it go further?',
+            A3: {
+              text: 'Offer to share the trophy with Ravi', s: 2,
+              oc: { icon: '🏅', title: 'Two winners', col: '#3B6D11', bg: '#EAF3DE', txt: "Milo holds the medal out between them. 'We should both have this one.' Ravi laughs, and for a moment it really does feel like they both won.", virt: 'Humility', img: '7/milo and ravi holding the trofy in the stage both happiky.png', reflect: 'Milo was proud of his own work and still chose to share the win. What does that tell you about what real humility looks like?' },
+            },
+            B3: {
+              text: 'Leave it as it is', s: 2,
+              oc: { icon: '🌟', title: 'Both things can be true', col: '#3B6D11', bg: '#EAF3DE', txt: "Ravi's shoulders relax. Hearing that Milo is proud, and that his own work stood out, lands differently than either one alone. They end up comparing notes on how they each drew the clouds.", virt: 'Humility', img: '7/milo and ravi both happily talking in the class tables.png' },
+            },
+          },
         },
       },
     },

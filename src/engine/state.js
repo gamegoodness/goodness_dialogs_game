@@ -17,9 +17,10 @@ export const G = {
   episode: ACTIVE_EPISODE,
   screen: 'title',   // 'title' | 'game' | 'final'
   idx: 0,            // moment index
-  phase: 'c1',       // 'c1' (first choice) | 'c2' (second choice) | 'outcome'
+  phase: 'c1',       // 'c1' (first choice) | 'c2' (second choice) | 'c3' (optional third choice) | 'outcome'
   path: null,        // 'A' | 'B'  - first choice
   path2: null,       // 'A2' | 'B2' - second choice
+  path3: null,       // 'A3' | 'B3' - optional third choice (only when the 2nd choice has an L3)
   score: 0,
   virtues: [],
   journal: [],       // one entry per completed moment (choices + the kid's thought)
@@ -43,10 +44,23 @@ export function branch() {
   return G.path === 'A' ? s.A.L2 : s.B.L2;
 }
 
-/** The chosen outcome object (after both choices are made). */
-export function outcome() {
+/** The chosen second-level choice node (L2). May carry an optional `L3`. */
+export function choice2() {
   const br = branch();
   return G.path2 === 'A2' ? br.A2 : br.B2;
+}
+
+/** The optional third-level branch (L3) hanging off the chosen 2nd choice. */
+export function branch3() {
+  return choice2().L3;
+}
+
+/** The chosen outcome object. When the 2nd choice has an `L3`, the outcome
+ * comes from the third choice; otherwise the 2nd choice IS the outcome. */
+export function outcome() {
+  const c2 = choice2();
+  if (c2.L3) return G.path3 === 'A3' ? c2.L3.A3 : c2.L3.B3;
+  return c2;
 }
 
 export function isLastMoment() { return G.idx >= total() - 1; }
@@ -56,7 +70,7 @@ export function isLastMoment() { return G.idx >= total() - 1; }
 export function startGame() {
   const first = moments()[0];
   Object.assign(G, {
-    screen: 'game', idx: 0, phase: 'c1', path: null, path2: null,
+    screen: 'game', idx: 0, phase: 'c1', path: null, path2: null, path3: null,
     score: 0, virtues: [], journal: [], am: first.am, al: first.al, reflectDone: false,
   });
 }
@@ -71,11 +85,8 @@ export function pick(p) {
   G.al = br.al;
 }
 
-/** Second-level choice. p2 = 'A2' | 'B2'. Applies score + virtue + angel mood. */
-export function pick2(p2) {
-  const br = branch();
-  const choice = p2 === 'A2' ? br.A2 : br.B2;
-  G.path2 = p2;
+/** Apply an outcome choice: score + virtue + angel mood, then reveal outcome. */
+function resolveChoice(choice) {
   G.score += choice.s;
   if (choice.s > 0) G.virtues.push(choice.oc.virt);
 
@@ -86,6 +97,29 @@ export function pick2(p2) {
   else { G.am = 'sad'; G.al = 'I hope Milo will remember how this felt.'; }
 
   G.phase = 'outcome';
+}
+
+/** Second-level choice. p2 = 'A2' | 'B2'. If the chosen node carries an `L3`,
+ * defer to a third choice; otherwise resolve the outcome now. */
+export function pick2(p2) {
+  const br = branch();
+  const choice = p2 === 'A2' ? br.A2 : br.B2;
+  G.path2 = p2;
+  if (choice.L3) {
+    G.phase = 'c3';
+    G.am = choice.L3.am;
+    G.al = choice.L3.al;
+    return;
+  }
+  resolveChoice(choice);
+}
+
+/** Optional third-level choice. p3 = 'A3' | 'B3'. Applies score + outcome. */
+export function pick3(p3) {
+  const l3 = branch3();
+  const choice = p3 === 'A3' ? l3.A3 : l3.B3;
+  G.path3 = p3;
+  resolveChoice(choice);
 }
 
 export function skipReflect() { G.reflectDone = true; }
@@ -99,7 +133,7 @@ export function replayThis() {
     if (i > -1) G.virtues.splice(i, 1);
   }
   const s = moment();
-  G.phase = 'c1'; G.path = null; G.path2 = null; G.reflectDone = false;
+  G.phase = 'c1'; G.path = null; G.path2 = null; G.path3 = null; G.reflectDone = false;
   G.am = s.am; G.al = s.al;
 }
 
@@ -107,7 +141,7 @@ export function replayThis() {
 export function goNext() {
   if (!isLastMoment()) {
     G.idx++;
-    G.phase = 'c1'; G.path = null; G.path2 = null; G.reflectDone = false;
+    G.phase = 'c1'; G.path = null; G.path2 = null; G.path3 = null; G.reflectDone = false;
     const s = moment();
     G.am = s.am; G.al = s.al;
   } else {
@@ -118,7 +152,7 @@ export function goNext() {
 /** Back to the title screen, full reset. */
 export function replayGame() {
   Object.assign(G, {
-    screen: 'title', idx: 0, phase: 'c1', path: null, path2: null,
+    screen: 'title', idx: 0, phase: 'c1', path: null, path2: null, path3: null,
     score: 0, virtues: [], journal: [], am: 'neutral',
     al: "I'm watching over Milo today.", reflectDone: false,
   });

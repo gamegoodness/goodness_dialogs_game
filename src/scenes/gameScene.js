@@ -35,8 +35,8 @@ import { TIMING, bgImage } from '../data/config.js';
 import { CHARACTER_NAMES } from '../data/scenarios.js';
 import { logEvent } from '../engine/analytics.js';
 import {
-  G, moment, branch, outcome, total, isLastMoment,
-  pick, pick2, goNext, replayThis, recordJournalEntry,
+  G, moment, branch, choice2, branch3, outcome, total, isLastMoment,
+  pick, pick2, pick3, goNext, replayThis, recordJournalEntry,
 } from '../engine/state.js';
 
 export function createGameScene(app) {
@@ -354,6 +354,27 @@ export function createGameScene(app) {
     return content;
   }
 
+  function buildC3() {
+    const s = moment();
+    const l3 = branch3();
+    const body = el('div.ctext');
+    const content = el('div.phase', {}, [body]);
+    content._start = async () => {
+      await playStory({
+        beats: (l3.story && l3.story.length) ? l3.story : [{ who: null, text: l3.sit }],
+        body, summary: l3.sit,
+      });
+      if (!alive) return;
+      setNameplate('✦', 'Your choice');
+      content.appendChild(el('div.eyebrow.choose', {}, ['What should Milo do?']));
+      content.appendChild(choicesRow([
+        createChoiceButton({ letter: 'A', text: l3.A3.text, color: s.tc, index: 0, onSelect: chooseC3 }),
+        createChoiceButton({ letter: 'B', text: l3.B3.text, color: s.tc, index: 1, onSelect: chooseC3 }),
+      ]));
+    };
+    return content;
+  }
+
   function buildOutcome() {
     const s = moment();
     const oc = outcome().oc;
@@ -379,7 +400,7 @@ export function createGameScene(app) {
     const reflectReq = el('div.rreq', {}, ['Please write a thought to continue.']);
     const reflectBox = el('div.rbox.rbox-enter', {}, [
       el('div.rq', {}, ['💬 What do you think about this scenario?']),
-      el('div.rsub', {}, [s.reflect]),
+      el('div.rsub', {}, [oc.reflect || s.reflect]),
       reflectArea,
       reflectReq,
     ]);
@@ -416,6 +437,7 @@ export function createGameScene(app) {
   function build(phase) {
     if (phase === 'c1') return buildC1();
     if (phase === 'c2') return buildC2();
+    if (phase === 'c3') return buildC3();
     return buildOutcome();
   }
 
@@ -448,9 +470,33 @@ export function createGameScene(app) {
     guard.run(async () => {
       const s = moment();
       pick2(letter === 'A' ? 'A2' : 'B2');
+      // When the 2nd choice opens a third decision, scoring/outcome is deferred.
+      if (G.phase === 'c3') {
+        logEvent('choice_2', {
+          moment: s.id, title: s.title, path: G.path, choice: letter,
+          text: choice2().text,
+        });
+        await renderPhase('forward');
+        return;
+      }
       const o = outcome();
       logEvent('choice_2', {
         moment: s.id, title: s.title, path: G.path, choice: letter,
+        text: o.text, score: o.s, outcome: o.oc.title, virtue: o.oc.virt,
+      });
+      pill.update(G.score);
+      dots.setCurrent(G.idx);
+      await renderPhase('forward');
+    });
+  }
+
+  function chooseC3(letter) {
+    guard.run(async () => {
+      const s = moment();
+      pick3(letter === 'A' ? 'A3' : 'B3');
+      const o = outcome();
+      logEvent('choice_3', {
+        moment: s.id, title: s.title, path: G.path, path2: G.path2, choice: letter,
         text: o.text, score: o.s, outcome: o.oc.title, virtue: o.oc.virt,
       });
       pill.update(G.score);
