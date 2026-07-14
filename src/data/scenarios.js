@@ -457,7 +457,7 @@ export const EPISODE_1 = [
             am: 'happy', al: 'This is going well. Could it go further?',
             A3: {
               text: 'Offer to share the trophy with Ravi', s: 2,
-              oc: { icon: '🏅', title: 'Two winners', col: '#3B6D11', bg: '#EAF3DE', txt: "Milo holds the medal out between them. 'We should both have this one.' Ravi laughs, and for a moment it really does feel like they both won.", virt: 'Humility', img: '7/milo and ravi holding the trofy in the stage both happiky.png', reflect: 'Milo was proud of his own work and still chose to share the win. What does that tell you about what real humility looks like?' },
+              oc: { icon: '🏅', title: 'Two winners', col: '#3B6D11', bg: '#EAF3DE', txt: "Milo holds the trophy between then. "This should be both ours - your sky took three tries, mine took give. Ravi laughs and holds thr trophy with Milo", virt: 'Humility', img: '7/milo and ravi holding the trofy in the stage both happiky.png', reflect: 'Milo was proud of his own work and still chose to share the win. What does that tell you about what real humility looks like?' },
             },
             B3: {
               text: 'Leave it as it is', s: 2,
