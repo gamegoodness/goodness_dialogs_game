@@ -162,7 +162,7 @@ export function createGameScene(app) {
       setTimeout(() => { if (alive) positionSpeech(); }, 480);
     } else {
       layer.classList.remove('focused', 'charline');
-      setNameplate('📖', 'Story');
+      setNameplate('📖', `${moment().tag} - Story`);
       dialog.appendChild(okBtn);
     }
   }
