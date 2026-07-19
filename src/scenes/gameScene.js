@@ -47,7 +47,6 @@ export function createGameScene(app) {
   // ── HUD (top bar) ────────────────────────────────────────────────────────
   const momentLabel = el('div.ep');
   const dots = createProgressDots(total(), G.idx);
-  const tagChip = el('div.hud-chip');
   const pill = createScorePill(G.score);
 
   const hud = el('div.hud', {}, [
@@ -55,7 +54,6 @@ export function createGameScene(app) {
       el('div.hud-panel', {}, [momentLabel, dots.el]),
     ]),
     el('div.hud-group', {}, [
-      tagChip,
       el('div.hud-panel', {}, [pill.el]),
     ]),
   ]);
@@ -99,7 +97,6 @@ export function createGameScene(app) {
   function applyMomentChrome() {
     const s = moment();
     momentLabel.textContent = `Moment ${s.id} of ${total()}`;
-    tagChip.textContent = s.tag;
     layer.style.setProperty('--tc', s.tc);
   }
   applyMomentChrome();
