@@ -19,6 +19,9 @@ export function createBrandFooter({ fixed = false } = {}) {
     el('img.brand-logo', {
       src: ASSETS.brand, alt: 'Game Goodness', draggable: false,
     }),
-    el('div.brand-note', {}, ['An Initiative by Foundation of Goodness.']),
+    el('div.brand-note', {}, [
+      'Game Goodness™ is a trademark of the Foundation of Goodness. ' +
+      '© 2026 Foundation of Goodness. All rights reserved.',
+    ]),
   ]);
 }
