@@ -19,7 +19,7 @@ export const ASSETS = {
   angel: IMG + 'good angel/angel good (1).svg',
   logo: IMG + 'good angel/angel good (1).svg',
   // "Game Goodness" brand lockup, shown in the title + final footer.
-  brand: IMG + 'game goodness logo.png',
+  brand: IMG + 'TM.png',
   sounds: {
     // Looping background music (see engine/music.js + components/musicWidget.js).
     bg: SND + 'bg-music.mp3',
